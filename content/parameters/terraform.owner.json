@@ -1,0 +1,6 @@
+{
+  "Name": "terraform.owner",
+  "Schema": {
+    "type": "string"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "Name": "terraform.managed",
+  "Schema": {
+    "type": "boolean"
+  }
+}

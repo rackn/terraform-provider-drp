@@ -1,0 +1,7 @@
+{
+  "Name": "terraform-managed",
+  "Params": {
+    "terraform-managed": true,
+    "terraform-allocated": false
+  }
+}
