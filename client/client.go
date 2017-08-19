@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/VictorLowther/jsonpatch2"
-	"github.com/digitalrebar/provision/backend"
+	"github.com/digitalrebar/provision/models"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
@@ -94,7 +94,7 @@ func (c *Client) doGet(path string, params url.Values, data interface{}) error {
 
 		// We got an error
 		if response.StatusCode > 299 || response.StatusCode < 200 {
-			berr := backend.Error{}
+			berr := models.Error{}
 			if err := json.NewDecoder(response.Body).Decode(&berr); err != nil {
 				return err
 			} else {
@@ -132,7 +132,7 @@ func (c *Client) doPatch(path string, patch jsonpatch2.Patch, data interface{}) 
 
 		// We got an error
 		if response.StatusCode > 299 || response.StatusCode < 200 {
-			berr := backend.Error{}
+			berr := models.Error{}
 			if err := json.NewDecoder(response.Body).Decode(&berr); err != nil {
 				return err
 			} else {
@@ -146,19 +146,19 @@ func (c *Client) doPatch(path string, patch jsonpatch2.Patch, data interface{}) 
 }
 
 // Gets all managed and unallocated machines (in addition to the other params)
-func (c *Client) getAllMachines(params url.Values) ([]*backend.Machine, error) {
+func (c *Client) getAllMachines(params url.Values) ([]*models.Machine, error) {
 	log.Printf("[DEBUG] [getAllMachines] Getting all machines from DRP\n")
-	data := []*backend.Machine{}
+	data := []*models.Machine{}
 	return data, c.doGet("machines", params, &data)
 }
 
-func (c *Client) getSingleMachine(uuid string) (*backend.Machine, error) {
+func (c *Client) getSingleMachine(uuid string) (*models.Machine, error) {
 	log.Printf("[DEBUG] [getSingleMachine] Getting a machine (%s) from DRP\n", uuid)
-	data := &backend.Machine{}
+	data := &models.Machine{}
 	return data, c.doGet("machines/"+uuid, map[string][]string{}, data)
 }
 
-func (c *Client) AllocateMachine(params url.Values) (*backend.Machine, error) {
+func (c *Client) AllocateMachine(params url.Values) (*models.Machine, error) {
 	log.Printf("[DEBUG] [allocateMachines] Allocating a machine with following params: %+v", params)
 	for {
 		if machines, err := c.getAllMachines(params); err != nil {
@@ -188,10 +188,10 @@ func (c *Client) AllocateMachine(params url.Values) (*backend.Machine, error) {
 				patch = append(patch, p_repl)
 			}
 
-			machine := &backend.Machine{}
+			machine := &models.Machine{}
 			err = c.doPatch("machines/"+machines[0].UUID(), patch, machine)
 			if err != nil {
-				berr, ok := err.(*backend.Error)
+				berr, ok := err.(*models.Error)
 				if ok {
 					// If we get a patch error, the machine was allocated while we were
 					// waiting.  Try again.
@@ -232,7 +232,7 @@ func (c *Client) ReleaseMachine(uuid string) error {
 }
 
 // Update the machine to request position
-func (c *Client) UpdateMachine(machineObj *backend.Machine, constraints url.Values) error {
+func (c *Client) UpdateMachine(machineObj *models.Machine, constraints url.Values) error {
 	oj, err := json.Marshal(machineObj)
 	if err != nil {
 		return err
