@@ -305,9 +305,7 @@ func (c *Client) GetMachineStatus(uuid string) resource.StateRefreshFunc {
 			return nil, "", err
 		}
 
-		// GREG: Make something up - still need something better, but this works.
-
-		ta := machineObject.Profile.Params["terraform.allocated"].(bool)
+		ta := machineObject.Profile.Params["terraform.provisioned"].(bool)
 		machineStatus := "6"
 		if !ta {
 			machineStatus = "4"
