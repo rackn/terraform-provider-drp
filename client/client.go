@@ -114,6 +114,7 @@ func (c *Client) doPatch(path string, patch jsonpatch2.Patch, data interface{}) 
 
 	request, err := c.buildRequest("PATCH", path, bytes.NewBuffer(jp))
 	if err != nil {
+		log.Printf("[DEBUG] [doPatch] failed to build requiest error = %v\n", err)
 		return err
 	}
 
@@ -127,6 +128,7 @@ func (c *Client) doPatch(path string, patch jsonpatch2.Patch, data interface{}) 
 
 		// We aren't authorized
 		if response.StatusCode == http.StatusUnauthorized || response.StatusCode == http.StatusForbidden {
+			log.Printf("[DEBUG] [doPatch] unauthorized\n")
 			return fmt.Errorf("Unauthorized access")
 		}
 
@@ -134,8 +136,10 @@ func (c *Client) doPatch(path string, patch jsonpatch2.Patch, data interface{}) 
 		if response.StatusCode > 299 || response.StatusCode < 200 {
 			berr := models.Error{}
 			if err := json.NewDecoder(response.Body).Decode(&berr); err != nil {
+				log.Printf("[DEBUG] [doPatch] responded error = %v\n", err)
 				return err
 			} else {
+				log.Printf("[DEBUG] [doPatch] berr: responded error = %v\n", berr)
 				return &berr
 			}
 		}
