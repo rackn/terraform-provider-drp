@@ -114,6 +114,7 @@ func (c *Client) doPatch(path string, patch jsonpatch2.Patch, data interface{}) 
 
 	request, err := c.buildRequest("PATCH", path, bytes.NewBuffer(jp))
 	if err != nil {
+		log.Printf("[DEBUG] [doPatch] failed to build requiest error = %v\n", err)
 		return err
 	}
 
@@ -127,6 +128,7 @@ func (c *Client) doPatch(path string, patch jsonpatch2.Patch, data interface{}) 
 
 		// We aren't authorized
 		if response.StatusCode == http.StatusUnauthorized || response.StatusCode == http.StatusForbidden {
+			log.Printf("[DEBUG] [doPatch] unauthorized\n")
 			return fmt.Errorf("Unauthorized access")
 		}
 
@@ -134,8 +136,10 @@ func (c *Client) doPatch(path string, patch jsonpatch2.Patch, data interface{}) 
 		if response.StatusCode > 299 || response.StatusCode < 200 {
 			berr := models.Error{}
 			if err := json.NewDecoder(response.Body).Decode(&berr); err != nil {
+				log.Printf("[DEBUG] [doPatch] responded error = %v\n", err)
 				return err
 			} else {
+				log.Printf("[DEBUG] [doPatch] berr: responded error = %v\n", berr)
 				return &berr
 			}
 		}
@@ -185,6 +189,16 @@ func (c *Client) AllocateMachine(params url.Values) (*models.Machine, error) {
 
 				p_repl := jsonpatch2.Operation{Op: "replace", Path: "/Profile/Params/terraform.allocated",
 					From: "", Value: true}
+				patch = append(patch, p_repl)
+			}
+
+			if machines[0].Profile.Params["terraform.provisioned"] == nil {
+				p_repl := jsonpatch2.Operation{Op: "add", Path: "/Profile/Params/terraform.provisioned",
+					From: "", Value: false}
+				patch = append(patch, p_repl)
+			} else {
+				p_repl := jsonpatch2.Operation{Op: "replace", Path: "/Profile/Params/terraform.provisioned",
+					From: "", Value: false}
 				patch = append(patch, p_repl)
 			}
 
@@ -301,9 +315,7 @@ func (c *Client) GetMachineStatus(uuid string) resource.StateRefreshFunc {
 			return nil, "", err
 		}
 
-		// GREG: Make something up - still need something better, but this works.
-
-		ta := machineObject.Profile.Params["terraform.allocated"].(bool)
+		ta := machineObject.Profile.Params["terraform.provisioned"].(bool)
 		machineStatus := "6"
 		if !ta {
 			machineStatus = "4"

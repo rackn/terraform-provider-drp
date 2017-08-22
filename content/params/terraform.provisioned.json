@@ -1,0 +1,6 @@
+{
+  "Name": "terraform.provisioned",
+  "Schema": {
+    "type": "boolean"
+  }
+}

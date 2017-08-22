@@ -40,8 +40,16 @@ func resourceDRPInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	if err := cc.MachineDo(machineObj.UUID(), "power_on", url.Values{}); err != nil {
-		log.Printf("[ERROR] [resourceDRPInstanceCreate] Unable to power up machine: %s\n", machineObj.UUID())
+	if err := cc.MachineDo(machineObj.UUID(), "nextbootpxe", url.Values{}); err != nil {
+		log.Printf("[ERROR] [resourceDRPInstanceCreate] Unable to mark the machine for pxe next boot: %s\n", machineObj.UUID())
+		if err2 := cc.ReleaseMachine(machineObj.UUID()); err2 != nil {
+			log.Println("[ERROR] [resourceDRPInstanceCreate] Unable to release machine: %v", err2)
+		}
+		return err
+	}
+
+	if err := cc.MachineDo(machineObj.UUID(), "powercycle", url.Values{}); err != nil {
+		log.Printf("[ERROR] [resourceDRPInstanceCreate] Unable to power cycleup machine: %s\n", machineObj.UUID())
 		if err2 := cc.ReleaseMachine(machineObj.UUID()); err2 != nil {
 			log.Println("[ERROR] [resourceDRPInstanceCreate] Unable to release machine: %v", err2)
 		}
