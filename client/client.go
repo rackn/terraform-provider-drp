@@ -192,16 +192,6 @@ func (c *Client) AllocateMachine(params url.Values) (*models.Machine, error) {
 				patch = append(patch, p_repl)
 			}
 
-			if machines[0].Profile.Params["terraform.provisioned"] == nil {
-				p_repl := jsonpatch2.Operation{Op: "add", Path: "/Profile/Params/terraform.provisioned",
-					From: "", Value: false}
-				patch = append(patch, p_repl)
-			} else {
-				p_repl := jsonpatch2.Operation{Op: "replace", Path: "/Profile/Params/terraform.provisioned",
-					From: "", Value: false}
-				patch = append(patch, p_repl)
-			}
-
 			machine := &models.Machine{}
 			err = c.doPatch("machines/"+machines[0].UUID(), patch, machine)
 			if err != nil {
@@ -315,9 +305,9 @@ func (c *Client) GetMachineStatus(uuid string) resource.StateRefreshFunc {
 			return nil, "", err
 		}
 
-		ta := machineObject.Profile.Params["terraform.provisioned"].(bool)
+		ta := machineObject.BootEnv
 		machineStatus := "6"
-		if !ta {
+		if ta != "local" {
 			machineStatus = "4"
 		}
 
