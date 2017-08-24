@@ -308,7 +308,7 @@ func (c *Client) GetMachineStatus(uuid string) resource.StateRefreshFunc {
 		ta := machineObject.BootEnv
 		machineStatus := "6"
 		if ta != "local" {
-			machineStatus = "4"
+			machineStatus = "9"
 		}
 
 		var statusRetVal bytes.Buffer
