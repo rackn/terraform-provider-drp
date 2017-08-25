@@ -48,7 +48,7 @@ func resourceDRPInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	if err := cc.MachineDo(machineObj.UUID(), "powercycle", url.Values{}); err != nil {
+	if err := cc.MachineDo(machineObj.UUID(), "poweron", url.Values{}); err != nil {
 		log.Printf("[ERROR] [resourceDRPInstanceCreate] Unable to power cycleup machine: %s\n", machineObj.UUID())
 		if err2 := cc.ReleaseMachine(machineObj.UUID()); err2 != nil {
 			log.Println("[ERROR] [resourceDRPInstanceCreate] Unable to release machine: %v", err2)
@@ -145,6 +145,11 @@ func parseConstraints(d *schema.ResourceData) (url.Values, error) {
 		}
 	}
 
+	udval, set := d.GetOk("userdata")
+	if set {
+		retVal["userdata"] = []string{udval.(string)}
+	}
+
 	retVal["profiles"] = []string{}
 	aval, set := d.GetOk("profiles")
 	if set {
@@ -208,6 +213,11 @@ func resourceDRPInstance() *schema.Resource {
 			},
 
 			"description": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+
+			"userdata": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},

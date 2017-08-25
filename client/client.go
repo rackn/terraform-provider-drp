@@ -16,6 +16,7 @@ import (
 
 	"github.com/VictorLowther/jsonpatch2"
 	"github.com/digitalrebar/provision/models"
+	"github.com/ghodss/yaml"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
@@ -64,6 +65,87 @@ func (c *Client) buildRequest(method, path string, data io.Reader) (*http.Reques
 		request.Header.Set("Authorization", "Basic "+hdr)
 	}
 	return request, nil
+}
+
+// GREG: Remove these when they are moved to models.
+type Stat struct {
+	// required: true
+	Name string `json:"name"`
+	// required: true
+	Count int `json:"count"`
+}
+
+// swagger:model
+type Info struct {
+	// required: true
+	Arch string `json:"arch"`
+	// required: true
+	Os string `json:"os"`
+	// required: true
+	Version string `json:"version"`
+	// required: true
+	Id string `json:"id"`
+	// required: true
+	ApiPort int `json:"api_port"`
+	// required: true
+	FilePort int `json:"file_port"`
+	// required: true
+	TftpEnabled bool `json:"tftp_enabled"`
+	// required: true
+	DhcpEnabled bool `json:"dhcp_enabled"`
+	// required: true
+	ProvisionerEnabled bool `json:"prov_enabled"`
+	// required: true
+	Stats []*Stat `json:"stats"`
+}
+
+type UserToken struct {
+	Token string
+	Info  Info
+}
+
+func (c *Client) getToken(machineId string) (string, error) {
+	request, err := c.buildRequest("GET", "users/"+c.APIUser+"/token", nil)
+	if err != nil {
+		return "", err
+	}
+
+	q := request.URL.Query()
+	q.Add("ttl", "3600")
+	q.Add("scope", "machines")
+	q.Add("specific", machineId)
+
+	request.URL.RawQuery = q.Encode()
+
+	if response, err := c.netClient.Do(request); err != nil {
+		log.Printf("[DEBUG] [getToken] call error = %v\n", err)
+		return "", err
+	} else {
+		defer response.Body.Close()
+
+		// We aren't authorized
+		if response.StatusCode == http.StatusUnauthorized || response.StatusCode == http.StatusForbidden {
+			return "", fmt.Errorf("getToken: Unauthorized access")
+		}
+
+		// We got an error
+		if response.StatusCode > 299 || response.StatusCode < 200 {
+			berr := models.Error{}
+			if err := json.NewDecoder(response.Body).Decode(&berr); err != nil {
+				return "", err
+			} else {
+				return "", &berr
+			}
+		}
+
+		// Gots data
+		var data UserToken
+		err := json.NewDecoder(response.Body).Decode(&data)
+		if err != nil {
+			return "", fmt.Errorf("getToken: unmarshall error: %v", err)
+		}
+		return data.Token, nil
+	}
 }
 
 func (c *Client) doGet(path string, params url.Values, data interface{}) error {
@@ -258,6 +340,41 @@ func (c *Client) UpdateMachine(machineObj *models.Machine, constraints url.Value
 	if val, set := constraints["owner"]; set {
 		machineObj.Profile.Params["terraform.owner"] = val[0]
 	}
+
+	userdata := map[string]interface{}{}
+	if val, set := constraints["userdata"]; set {
+		log.Printf("[DEBUG] [UpdateMachine] userdata: %v", val[0])
+		err := yaml.Unmarshal([]byte(val[0]), &userdata)
+		if err != nil {
+			return fmt.Errorf("Error unmarshalling user-data: %v", err)
+		}
+
+		log.Printf("[DEBUG] [UpdateMachine] unmarshal: %+v", userdata)
+	}
+
+	token, err := c.getToken(machineObj.UUID())
+	if err != nil {
+		return fmt.Errorf("Failed to generate token: %v", err)
+	}
+
+	drpPhoneHome := fmt.Sprintf("/usr/local/bin/drpcli -E %s -T %s machines bootenv %s local",
+		c.APIURL, strings.TrimSpace(token), machineObj.UUID())
+	drpPhoneHolder := "JJJJJJJJJJJJDDDDDDDDDDD"
+
+	obj, ok := userdata["runcmd"]
+	if !ok {
+		userdata["runcmd"] = append([]interface{}{}, drpPhoneHolder)
+	} else {
+		data, _ := obj.([]interface{})
+		userdata["runcmd"] = append(data, drpPhoneHolder)
+	}
+
+	ud, err := yaml.Marshal(userdata)
+	if err != nil {
+		return fmt.Errorf("Error marshalling user-data: %v", err)
+	}
+
+	machineObj.Profile.Params["cloud-init.user-data"] = "#cloud-config\n" + strings.Replace(string(ud), drpPhoneHolder, drpPhoneHome, -1)
 
 	if val, set := constraints["profiles"]; set {
 		for _, p := range val {

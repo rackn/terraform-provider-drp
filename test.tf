@@ -16,6 +16,7 @@ resource "drp_instance" "one_random_node" {
   bootenv     = "ubuntu-16.04-install"
   description = "updated description"
   name        = "greg2"
+  userdata    = "yaml cloudinit file"
   # List of profiles to apply to node (if not already there)
   profiles = ["mandy", "clause"]
   # list of parameters to set with their string value forms
