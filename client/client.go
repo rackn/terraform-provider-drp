@@ -439,7 +439,40 @@ func (c *Client) GetMachineStatus(uuid string) resource.StateRefreshFunc {
 func (c *Client) MachineDo(uuid, action string, params url.Values) error {
 	log.Printf("[DEBUG] [machineDo] uuid: %s, action: %s, params: %+v", uuid, action, params)
 
-	// GREG: Post machines action
+	td := map[string]interface{}{}
+	jp, err := json.Marshal(td)
+	if err != nil {
+		return fmt.Errorf("Failed to marshal empty map: %v", err)
+	}
+	request, err := c.buildRequest("POST", "machines/"+uuid+"/actions/"+action, bytes.NewBuffer(jp))
+	if err != nil {
+		return err
+	}
 
+	request.Header.Set("Content-Type", "application/json")
+	if response, err := c.netClient.Do(request); err != nil {
+		log.Printf("[DEBUG] [machineDo] call %s:%s error = %v\n", uuid, action, err)
+		return err
+	} else {
+		defer response.Body.Close()
+
+		// We aren't authorized
+		if response.StatusCode == http.StatusUnauthorized || response.StatusCode == http.StatusForbidden {
+			log.Printf("[DEBUG] [machineDo] unauthorized %s:%s\n", uuid, action)
+			return fmt.Errorf("getToken: Unauthorized access")
+		}
+
+		// We got an error
+		if response.StatusCode > 299 || response.StatusCode < 200 {
+			berr := models.Error{}
+			if err := json.NewDecoder(response.Body).Decode(&berr); err != nil {
+				log.Printf("[DEBUG] [machineDo] returned %s:%s error = %v\n", uuid, action, err)
+				return err
+			} else {
+				log.Printf("[DEBUG] [machineDo] returned %s:%s error = %v\n", uuid, action, &berr)
+				return &berr
+			}
+		}
+	}
 	return nil
 }
