@@ -1,0 +1,14 @@
+package: github.com/rackn/terraform-provider-drp
+import:
+- package: github.com/hashicorp/terraform
+  version: v0.9.4
+  subpackages:
+  - plugin
+  - terraform
+  - helper/resource
+  - helper/schema
+- package: github.com/ghodss/yaml
+- package: github.com/digitalrebar/provision
+  subpackages:
+  - models
+- package: github.com/VictorLowther/jsonpatch2
