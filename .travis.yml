@@ -4,7 +4,7 @@ addons:
     packages:
     - sshpass
     - bsdtar
-    - p7zip-full  
+    - p7zip-full
 sudo: false
 go:
 - 1.8
@@ -22,7 +22,7 @@ deploy:
   provider: releases
   overwrite: true
   api_key:
-    secure: qdX7rFhTWwwKCFNTAofzV+ln67fnn/ANDqfKcowjJAVWcv6cJ56Rg5Q9N0lL9y0wBzxRHM5yRCJKJGp432VC89l9ZWN2sSoNcZbQt/hLBAymP4F3KhGDQWFgKVo+JbzHvYCFuLm3pyyAZ8HrhOZZgv8vW76AXtFNhDmM7fB+LpkBHaFx/T2MiabAm1O2CLZJbk4AGq/Ach42FjGRSMxIIcsR3Ud82zrqjktgXm3jiv9t4aCghkiBh5JqisDhBVAFtfmAncgKhjBqMG5K4R2LpVhlFPLs9Y+kEE02/8c089gHPNYhDwZLbfyUF72lyuQ5H0sqSe/JGKUOgpGcSiafCy0gYGiLEH1vqxqkfdcGybS67dv09pPTos4ke0Nv+7feFFEzE6eplT1r2sDadIxFfp8e8mgW+NsbSY/Pgs7hGvi8K/qc2Zy/PRCZzAAOI3/QhpsxAowv+7TG27y1Z6SYTvqpJRL4Hr61P0UA8EUDeYTn5jdQKJss2kDB8QfNwyshDBR56rAlDZQoYuYl8w7hLLpUhdcQjnDQ3126f9EVDVgwYL43NIUehWoSU0Fq+5oGykn6bDY8QkPBUa3vpBrtRZmt3zF4OOlP8Kn9gc9Xr1+8ItBh3bXJFuHm4CN6JFCGS4aamEYQA/CK5x5WquA+ezyUbKVaKrfsBXGg5gKONZQ=
+    secure: oCXm7RDRNpzIEiTr17hWY21BvqT9uIH17ZmXlx7TL/0bTGdpNviNI5lFYdCYsJjf23lB4PDGaNiVHKsLso5GkF+tjDq6T/NmT94DBxGTHFXUam9fLoy6yKyGcE5zXM8VhVOL1V/dkZcw2KJD/85LbYuN8/uRxeW/U6QYvX4BlZlELGwUkni+reL8xm+c53WKRsxp+wNO7kzrrWkBppRmQ7gKASUE6MqKzGCojGQAkdr9F0BtBkBa4Zx/HEEQHO6vccCFx7xaeyOixdZHuppHFkLI6noyhDhunBYYUDBlt8aWTV5Qk8suNZcpTVmcQ+NY6aNXkzQQo1yX//f8OA02l9baVuucV6Y8jEzTUR9v2CNOBayhqih3EFe09jbVpywFraz9eEIgzgT9HKQeYxH8DGxgawR522jEmCj6VCJ6j2gNMBISCgJJYEP/VarWxzSFZ94NZ5KuFAwtgTyXt0xhMZyAgvd5y/FEDwBRhZp6sHz1tRsYRATYmLVOdCjmtZVk0lK0ffylFobhGQREkH3gN1rEZNep4CC7V8Bd5JFyIOrmJY8yWynnpWpKlyFF0PSH7bkWMRyvbq/D9C3D1mL9vgnAmCnS6JM0eyL2rVTdDtEjhmPDOTv9TVyhEtytUVWQ9UZaxRBaImOSATn8AKDzwNPsr4gDk4eGPwmJ6sCLw8Q=
   file:
   - terraform-provider-drp.zip
   - terraform-provider-drp.sha256
