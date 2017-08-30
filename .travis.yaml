@@ -1,0 +1,34 @@
+language: go
+addons:
+  apt:
+    packages:
+    - sshpass
+    - bsdtar
+    - p7zip-full  
+sudo: false
+go:
+- 1.8
+install:
+- ./tools/build.sh
+- ./tools/package.sh
+script:
+- ./tools/test.sh
+after_success:
+- bash <(curl -s https://codecov.io/bash) -t 6259c706-5c1d-471f-b62b-4f908ea1801d
+notifications:
+  slack:
+    secure: Imuptg78FWWZlGVb8LBuwn45CeMfnHgf+pXbftR8mSGFRsg08jw38MIRtw/MAET3RJsciwDXf22AkgM8WgZ+fcUbJI4MGn2IvnM40T/imc5deqlMn1QdE5HasWrrBwfyY7hDu8XBexit+2fmYLGGrHX2fsbvUJepT4xOV8MZbZWMYueoBuL2bxNRR+lhjqVsKMq+/8q4g7hsKxYOdStEOZQIM13qI8dbIIQK4cCPQGtdNMGlNSX0a/nEFZmxDKh3WILssZcRst7SW3QldYppJO21PcTmY/zCTLJ5b7izweLczDmV77ckv61X50B8iaarhwEMFYs9Icg8U69mAkbqeU5HsWy1d2VDPDG+QW32VMTU371pVEzsmBVzArSXvldULmRzYcA+9LoYb5P6LNbq2y7tdimETOElbkMyw53hnb4ZPiypLWlwusZibCxGsJMp41MgbxxaMKxUgrBsAY9nSBg/oj7ixditveXm5IjqBJXfFyxuxfvcxssT15AiqFI3z+Mpoarq233V7E/c0AwdYc/iJKPtW8DG2uSjb0EMIKopXjEi/tz8ykVQH1UbKww5PvGfzCw2mCNF+Bc925coTs8gwaU+XOnqQesggUheAmpaQhbdPGpNYecbLgtQ3kafEBllTrgLyTqISkXlDMZybItP1C8GrEEshGWSEzBAEGU=
+deploy:
+  provider: releases
+  overwrite: true
+  api_key:
+    secure: qdX7rFhTWwwKCFNTAofzV+ln67fnn/ANDqfKcowjJAVWcv6cJ56Rg5Q9N0lL9y0wBzxRHM5yRCJKJGp432VC89l9ZWN2sSoNcZbQt/hLBAymP4F3KhGDQWFgKVo+JbzHvYCFuLm3pyyAZ8HrhOZZgv8vW76AXtFNhDmM7fB+LpkBHaFx/T2MiabAm1O2CLZJbk4AGq/Ach42FjGRSMxIIcsR3Ud82zrqjktgXm3jiv9t4aCghkiBh5JqisDhBVAFtfmAncgKhjBqMG5K4R2LpVhlFPLs9Y+kEE02/8c089gHPNYhDwZLbfyUF72lyuQ5H0sqSe/JGKUOgpGcSiafCy0gYGiLEH1vqxqkfdcGybS67dv09pPTos4ke0Nv+7feFFEzE6eplT1r2sDadIxFfp8e8mgW+NsbSY/Pgs7hGvi8K/qc2Zy/PRCZzAAOI3/QhpsxAowv+7TG27y1Z6SYTvqpJRL4Hr61P0UA8EUDeYTn5jdQKJss2kDB8QfNwyshDBR56rAlDZQoYuYl8w7hLLpUhdcQjnDQ3126f9EVDVgwYL43NIUehWoSU0Fq+5oGykn6bDY8QkPBUa3vpBrtRZmt3zF4OOlP8Kn9gc9Xr1+8ItBh3bXJFuHm4CN6JFCGS4aamEYQA/CK5x5WquA+ezyUbKVaKrfsBXGg5gKONZQ=
+  file:
+  - terraform-provider-drp.zip
+  - terraform-provider-drp.sha256
+  - terraform.yaml
+  - terraform.sha256
+  skip_cleanup: true
+  on:
+    repo: rackn/terraform-provider-drp
+    tags: true
