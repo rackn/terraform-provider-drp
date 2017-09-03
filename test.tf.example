@@ -11,7 +11,7 @@ resource "drp_instance" "one_random_node" {
   # name = force the name to something.
   # bootenv = force the bootenv to image
   # description = force the description to something
-  # owner = force the terraform.owner value to something
+  # owner = force the terraform/owner value to something
 
   bootenv     = "ubuntu-16.04-install"
   description = "updated description"
