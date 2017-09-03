@@ -155,8 +155,8 @@ func (c *Client) doGet(path string, params url.Values, data interface{}) error {
 	}
 
 	q := request.URL.Query()
-	q.Add("terraform.managed", "true")
-	q.Add("terraform.allocated", "false")
+	q.Add("terraform/managed", "true")
+	q.Add("terraform/allocated", "false")
 	for _, s := range params["filters"] {
 		arr := strings.SplitN(s, "=", 2)
 		q.Add(arr[0], arr[1])
@@ -256,20 +256,20 @@ func (c *Client) AllocateMachine(params url.Values) (*models.Machine, error) {
 
 			patch := jsonpatch2.Patch{}
 
-			if machines[0].Profile.Params["terraform.allocated"] == nil {
-				p_test := jsonpatch2.Operation{Op: "test", Path: "/Profile/Params/terraform.allocated",
+			if machines[0].Profile.Params["terraform/allocated"] == nil {
+				p_test := jsonpatch2.Operation{Op: "test", Path: "/Profile/Params/terraform/allocated",
 					From: "", Value: nil}
 				patch = append(patch, p_test)
 
-				p_add := jsonpatch2.Operation{Op: "add", Path: "/Profile/Params/terraform.allocated",
+				p_add := jsonpatch2.Operation{Op: "add", Path: "/Profile/Params/terraform/allocated",
 					From: "", Value: true}
 				patch = append(patch, p_add)
 			} else {
-				p_test := jsonpatch2.Operation{Op: "test", Path: "/Profile/Params/terraform.allocated",
+				p_test := jsonpatch2.Operation{Op: "test", Path: "/Profile/Params/terraform/allocated",
 					From: "", Value: false}
 				patch = append(patch, p_test)
 
-				p_repl := jsonpatch2.Operation{Op: "replace", Path: "/Profile/Params/terraform.allocated",
+				p_repl := jsonpatch2.Operation{Op: "replace", Path: "/Profile/Params/terraform/allocated",
 					From: "", Value: true}
 				patch = append(patch, p_repl)
 			}
@@ -300,11 +300,11 @@ func (c *Client) ReleaseMachine(uuid string) error {
 	} else {
 		patch := jsonpatch2.Patch{}
 
-		p_test := jsonpatch2.Operation{Op: "test", Path: "/Profile/Params/terraform.allocated",
+		p_test := jsonpatch2.Operation{Op: "test", Path: "/Profile/Params/terraform/allocated",
 			From: "", Value: true}
 		patch = append(patch, p_test)
 
-		p_repl := jsonpatch2.Operation{Op: "replace", Path: "/Profile/Params/terraform.allocated",
+		p_repl := jsonpatch2.Operation{Op: "replace", Path: "/Profile/Params/terraform/allocated",
 			From: "", Value: false}
 		patch = append(patch, p_repl)
 
@@ -338,7 +338,7 @@ func (c *Client) UpdateMachine(machineObj *models.Machine, constraints url.Value
 		machineObj.Name = val[0]
 	}
 	if val, set := constraints["owner"]; set {
-		machineObj.Profile.Params["terraform.owner"] = val[0]
+		machineObj.Profile.Params["terraform/owner"] = val[0]
 	}
 
 	userdata := map[string]interface{}{}
@@ -374,7 +374,7 @@ func (c *Client) UpdateMachine(machineObj *models.Machine, constraints url.Value
 		return fmt.Errorf("Error marshalling user-data: %v", err)
 	}
 
-	machineObj.Profile.Params["cloud-init.user-data"] = "#cloud-config\n" + strings.Replace(string(ud), drpPhoneHolder, drpPhoneHome, -1)
+	machineObj.Profile.Params["cloud-init/user-data"] = "#cloud-config\n" + strings.Replace(string(ud), drpPhoneHolder, drpPhoneHome, -1)
 
 	if val, set := constraints["profiles"]; set {
 		for _, p := range val {

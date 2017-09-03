@@ -1,5 +1,5 @@
 {
-  "Name": "terraform.allocated",
+  "Name": "terraform/allocated",
   "Schema": {
     "type": "boolean"
   }
