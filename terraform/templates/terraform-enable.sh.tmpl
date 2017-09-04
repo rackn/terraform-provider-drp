@@ -34,7 +34,14 @@ if [[ $poweroff == "true" ]] ; then
     # Turn runnable off to indicate that we are sleepy.
     drpcli machines update $RS_UUID '{ "Runnable": false }'
 
-    shutdown -P now
+    # If we have a poweroff action, use it.
+    if drpcli machines action $RS_UUID poweroff ; then
+        drpcli machines runaction $RS_UUID poweroff
+    else
+        shutdown -P now
+    fi
+    # Wait for shutdown/poweroffs
+    sleep 30
 fi
 {{end}}
 
