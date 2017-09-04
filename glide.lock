@@ -1,12 +1,12 @@
 hash: aac6b92bf20bae5845415d6759562d31cae3764130aa1bced6708e95e9046200
-updated: 2017-08-29T10:51:03.664513246-05:00
+updated: 2017-09-04T17:09:29.94073153-05:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: 2bd8b58cf4275aeb086ade613de226773e29e853
   subpackages:
   - cidr
 - name: github.com/aws/aws-sdk-go
-  version: 3afc215b86987d7d465191700aaa8b9628aff380
+  version: 8d9e3039553a1f8ca137750a6eeed5fb5d62d7e6
   subpackages:
   - aws
   - aws/awserr
@@ -38,11 +38,11 @@ imports:
   subpackages:
   - netrc
 - name: github.com/davecgh/go-spew
-  version: adab96458c51a58dc1783b3335dcce5461522e75
+  version: a476722483882dd40b8111f0eb64e1d7f43f56e4
   subpackages:
   - spew
 - name: github.com/digitalrebar/provision
-  version: 28005df023d07f3d1f946342feac444d7a7d94b1
+  version: da0c1d2ce9601f3cc55cebdd002186ffb8764c11
   subpackages:
   - models
 - name: github.com/elithrar/simple-scrypt
@@ -52,7 +52,7 @@ imports:
 - name: github.com/go-ini/ini
   version: c787282c39ac1fc618827141a1f762240def08a3
 - name: github.com/golang/protobuf
-  version: ab9f9a6dab164b7d1246e0e688b0ab7b94d8553e
+  version: 17ce1425424ab154092bbb43af630bd647f3bb0d
   subpackages:
   - proto
   - ptypes
@@ -62,11 +62,11 @@ imports:
 - name: github.com/hashicorp/errwrap
   version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
 - name: github.com/hashicorp/go-getter
-  version: 6aae8e4e2dee8131187c6a54b52664796e5a02b0
+  version: c0d4e3e5abc92827485d2be6d9fba28952f99cdb
   subpackages:
   - helper/url
 - name: github.com/hashicorp/go-hclog
-  version: b4e5765d1e5f00a0550911084f45f8214b5b83b9
+  version: 8105cc0a3736cc153a2025f5d0d91b80045fc9ff
 - name: github.com/hashicorp/go-multierror
   version: 83588e72410abfbe4df460eeb6f30841ae47d4c4
 - name: github.com/hashicorp/go-plugin
@@ -124,7 +124,7 @@ imports:
 - name: github.com/mitchellh/go-homedir
   version: b8bc1bf767474819792c23f32d8286a45736f1c6
 - name: github.com/mitchellh/go-testing-interface
-  version: 9a441910b16872f7b8283682619b3761a9aa2222
+  version: 7bf6f6eaf1bed2fd3c6c63114b18cb64facb9de2
 - name: github.com/mitchellh/hashstructure
   version: 2bca23e0e452137f789efbc8610126fd8b94f73b
 - name: github.com/mitchellh/mapstructure
@@ -171,19 +171,20 @@ imports:
   - lex/httplex
   - trace
 - name: golang.org/x/text
-  version: 18c65dde6afd36dbc39197ca72008895b8dfbfb6
+  version: bd91bbf73e9a4a801adbfb97133c992678533126
   subpackages:
   - secure/bidirule
   - transform
   - unicode/bidi
   - unicode/norm
 - name: google.golang.org/genproto
-  version: ee236bd376b077c7a89f260c026c4735b195e459
+  version: 595979c8a7bf586b2d293fb42246bf91a0b893d9
   subpackages:
   - googleapis/rpc/status
 - name: google.golang.org/grpc
-  version: 2be1bca94fda955ac10e314fd6b69526b1f92400
+  version: 91999f444f2aa89f2f873c8429a424701309bec4
   subpackages:
+  - balancer
   - codes
   - connectivity
   - credentials
@@ -196,6 +197,7 @@ imports:
   - metadata
   - naming
   - peer
+  - resolver
   - stats
   - status
   - tap
