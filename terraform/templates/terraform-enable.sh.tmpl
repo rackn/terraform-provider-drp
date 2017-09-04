@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# This template marks a machine as terraform ready
+#
+# Required Parameters:
+# Optional Parameters:
+#
+# Parameter YAML format:
+#
+
+# This will contain a token appropriate for the path being
+# used below.  Either a create or update/show token
+export RS_UUID="{{.Machine.UUID}}"
+export RS_TOKEN="{{.GenerateToken}}"
+
+# Ubuntu Path is different than Centos Path - fix it.
+export PATH=$PATH:/usr/bin:/usr/sbin:/bin:/sbin
+
+echo "Marking node for ready for terraform"
+
+if ! drpcli machines set $RS_UUID param terraform/allocated to false ; then
+    echo "Failed to mark node as not allocated"
+    exit 4
+fi
+
+if ! drpcli machines set $RS_UUID param terraform/managed to true ; then
+    echo "Failed to mark node as not allocated"
+    exit 4
+fi
+
+{{if .ParamExists "terraform/poweroff"}}
+poweroff={{.Param "terraform/poweroff"}}
+if [[ $poweroff == "true" ]] ; then
+    # Turn runnable off to indicate that we are sleepy.
+    drpcli machines update $RS_UUID '{ "Runnable": false }'
+
+    halt
+fi
+{{end}}
+
+echo "Succesfully marked machine for terraform"
+exit 0
+

@@ -1,0 +1,6 @@
+{
+  "Name": "terraform/poweroff",
+  "Schema": {
+    "type": "boolean"
+  }
+}
