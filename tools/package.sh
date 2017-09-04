@@ -16,7 +16,7 @@ esac
 if [ ! -e drp ] ; then
     mkdir -p drp
     cd drp
-    curl -fsSL https://raw.githubusercontent.com/digitalrebar/provision/master/tools/install.sh | bash -s -- --isolated --drp-version=tip install
+    curl -fsSL https://raw.githubusercontent.com/digitalrebar/provision/master/tools/install.sh | bash -s -- --nocontent --isolated --drp-version=tip install
     cd ..
 fi
 
