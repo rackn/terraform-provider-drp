@@ -40,6 +40,8 @@ if [[ $poweroff == "true" ]] ; then
     else
         shutdown -P now
     fi
+    # Wait for shutdown/poweroffs
+    sleep 30
 fi
 {{end}}
 
