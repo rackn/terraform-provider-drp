@@ -325,11 +325,16 @@ func (c *Client) UpdateMachine(machineObj *models.Machine, constraints url.Value
 	}
 
 	// Apply the changes
+	usingStages := false
 	if machineObj.Profile.Params == nil {
 		machineObj.Profile.Params = map[string]interface{}{}
 	}
 	if val, set := constraints["bootenv"]; set {
 		machineObj.BootEnv = val[0]
+	}
+	if val, set := constraints["stage"]; set {
+		usingStages = true
+		machineObj.Stage = val[0]
 	}
 	if val, set := constraints["description"]; set {
 		machineObj.Description = val[0]
@@ -359,6 +364,10 @@ func (c *Client) UpdateMachine(machineObj *models.Machine, constraints url.Value
 
 	drpPhoneHome := fmt.Sprintf("/usr/local/bin/drpcli -E %s -T %s machines bootenv %s local",
 		c.APIURL, strings.TrimSpace(token), machineObj.UUID())
+	if usingStages {
+		drpPhoneHome = fmt.Sprintf("/usr/local/bin/drpcli -E %s -T %s machines stage %s complete",
+			c.APIURL, strings.TrimSpace(token), machineObj.UUID())
+	}
 	drpPhoneHolder := "JJJJJJJJJJJJDDDDDDDDDDD"
 
 	obj, ok := userdata["runcmd"]

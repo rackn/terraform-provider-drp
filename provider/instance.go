@@ -129,6 +129,7 @@ func resourceDRPInstanceDelete(d *schema.ResourceData, meta interface{}) error {
 var stringParams = []string{
 	"name",
 	"bootenv",
+	"stage",
 	"owner",
 	"description",
 }
@@ -195,6 +196,12 @@ func resourceDRPInstance() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"bootenv": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+
+			"stage": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
