@@ -17,7 +17,6 @@ import (
 	"github.com/VictorLowther/jsonpatch2"
 	"github.com/VictorLowther/jsonpatch2/utils"
 	"github.com/digitalrebar/provision/models"
-	"github.com/ghodss/yaml"
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
@@ -333,7 +332,6 @@ func (c *Client) UpdateMachine(machineObj *models.Machine, constraints url.Value
 	}
 
 	// Apply the changes
-	usingStages := false
 	if machineObj.Profile.Params == nil {
 		machineObj.Profile.Params = map[string]interface{}{}
 	}
@@ -341,7 +339,6 @@ func (c *Client) UpdateMachine(machineObj *models.Machine, constraints url.Value
 		machineObj.BootEnv = val[0]
 	}
 	if val, set := constraints["stage"]; set {
-		usingStages = true
 		machineObj.Stage = val[0]
 	}
 	if val, set := constraints["description"]; set {
@@ -353,46 +350,9 @@ func (c *Client) UpdateMachine(machineObj *models.Machine, constraints url.Value
 	if val, set := constraints["owner"]; set {
 		machineObj.Profile.Params["terraform/owner"] = val[0]
 	}
-
-	userdata := map[string]interface{}{}
 	if val, set := constraints["userdata"]; set {
-		log.Printf("[DEBUG] [UpdateMachine] userdata: %v", val[0])
-		err := yaml.Unmarshal([]byte(val[0]), &userdata)
-		if err != nil {
-			return fmt.Errorf("Error unmarshalling user-data: %v", err)
-		}
-
-		log.Printf("[DEBUG] [UpdateMachine] unmarshal: %+v", userdata)
+		machineObj.Profile.Params["cloud-init/user-data"] = val[0]
 	}
-
-	token, err := c.getToken(machineObj.UUID())
-	if err != nil {
-		return fmt.Errorf("Failed to generate token: %v", err)
-	}
-
-	drpPhoneHome := fmt.Sprintf("/usr/local/bin/drpcli -E %s -T %s machines bootenv %s local",
-		c.APIURL, strings.TrimSpace(token), machineObj.UUID())
-	if usingStages {
-		drpPhoneHome = fmt.Sprintf("/usr/local/bin/drpcli -E %s -T %s machines stage %s complete",
-			c.APIURL, strings.TrimSpace(token), machineObj.UUID())
-	}
-	drpPhoneHolder := "JJJJJJJJJJJJDDDDDDDDDDD"
-
-	obj, ok := userdata["runcmd"]
-	if !ok {
-		userdata["runcmd"] = append([]interface{}{}, drpPhoneHolder)
-	} else {
-		data, _ := obj.([]interface{})
-		userdata["runcmd"] = append(data, drpPhoneHolder)
-	}
-
-	ud, err := yaml.Marshal(userdata)
-	if err != nil {
-		return fmt.Errorf("Error marshalling user-data: %v", err)
-	}
-
-	machineObj.Profile.Params["cloud-init/user-data"] = "#cloud-config\n" + strings.Replace(string(ud), drpPhoneHolder, drpPhoneHome, -1)
-
 	if val, set := constraints["profiles"]; set {
 		for _, p := range val {
 			found := false
@@ -407,7 +367,6 @@ func (c *Client) UpdateMachine(machineObj *models.Machine, constraints url.Value
 			}
 		}
 	}
-
 	if val, set := constraints["parameters"]; set {
 		for _, parm := range val {
 			arr := strings.SplitN(parm, "=", 2)
@@ -439,10 +398,15 @@ func (c *Client) GetMachineStatus(uuid string) resource.StateRefreshFunc {
 			return nil, "", err
 		}
 
-		ta := machineObject.BootEnv
 		machineStatus := "6"
-		if ta != "local" {
-			machineStatus = "9"
+		if machineObject.Stage != "" {
+			if machineObject.Stage != "complete" {
+				machineStatus = "9"
+			}
+		} else {
+			if machineObject.BootEnv != "local" {
+				machineStatus = "9"
+			}
 		}
 
 		var statusRetVal bytes.Buffer
