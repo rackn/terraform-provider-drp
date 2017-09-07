@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/VictorLowther/jsonpatch2"
+	"github.com/VictorLowther/jsonpatch2/utils"
 	"github.com/digitalrebar/provision/models"
 	"github.com/ghodss/yaml"
 	"github.com/hashicorp/terraform/helper/resource"
@@ -200,6 +201,9 @@ func (c *Client) doPatch(path string, patch jsonpatch2.Patch, data interface{}) 
 		return err
 	}
 
+	q := request.URL.Query()
+	q.Add("force", "true")
+	request.URL.RawQuery = q.Encode()
 	request.Header.Set("Content-Type", "application/json")
 
 	if response, err := c.netClient.Do(request); err != nil {
@@ -253,29 +257,33 @@ func (c *Client) AllocateMachine(params url.Values) (*models.Machine, error) {
 			if len(machines) == 0 {
 				return nil, fmt.Errorf("No machines available")
 			}
+			machine := machines[0]
 
-			patch := jsonpatch2.Patch{}
-
-			if machines[0].Profile.Params["terraform/allocated"] == nil {
-				p_test := jsonpatch2.Operation{Op: "test", Path: "/Profile/Params/terraform/allocated",
-					From: "", Value: nil}
-				patch = append(patch, p_test)
-
-				p_add := jsonpatch2.Operation{Op: "add", Path: "/Profile/Params/terraform/allocated",
-					From: "", Value: true}
-				patch = append(patch, p_add)
-			} else {
-				p_test := jsonpatch2.Operation{Op: "test", Path: "/Profile/Params/terraform/allocated",
-					From: "", Value: false}
-				patch = append(patch, p_test)
-
-				p_repl := jsonpatch2.Operation{Op: "replace", Path: "/Profile/Params/terraform/allocated",
-					From: "", Value: true}
-				patch = append(patch, p_repl)
+			var baseObj []byte
+			var merged []byte
+			var err error
+			if baseObj, err = json.Marshal(machine); err != nil {
+				return nil, fmt.Errorf("Error marshalling baseObj: %v", err)
 			}
 
-			machine := &models.Machine{}
-			err = c.doPatch("machines/"+machines[0].UUID(), patch, machine)
+			if machine.Profile.Params == nil {
+				machine.Profile.Params = map[string]interface{}{}
+			}
+			machine.Profile.Params["terraform/allocated"] = true
+
+			if merged, err = json.Marshal(machine); err != nil {
+				return nil, fmt.Errorf("Error marshalling merged: %v", err)
+			}
+
+			patch := jsonpatch2.Patch{}
+			if pdata, err := jsonpatch2.Generate(baseObj, merged, true); err != nil {
+				return nil, fmt.Errorf("Error generating patch: %v", err)
+			} else if err := utils.Remarshal(&pdata, &patch); err != nil {
+				return nil, fmt.Errorf("Error translating patch: %v", err)
+			}
+
+			retMachine := &models.Machine{}
+			err = c.doPatch("machines/"+machine.UUID(), patch, retMachine)
 			if err != nil {
 				berr, ok := err.(*models.Error)
 				if ok {
@@ -288,7 +296,7 @@ func (c *Client) AllocateMachine(params url.Values) (*models.Machine, error) {
 				return nil, err
 			}
 
-			return machine, nil
+			return retMachine, nil
 		}
 	}
 }
