@@ -12,3 +12,5 @@ import:
   subpackages:
   - models
 - package: github.com/VictorLowther/jsonpatch2
+  subpackages:
+  - utils
