@@ -1,5 +1,5 @@
-hash: 802f2222c4c2e51f17a635e3699988cf0475534f58ea3cf68dfea7e6e7a8fc83
-updated: 2017-09-05T10:26:22.183167444-05:00
+hash: a9748f07e377c76148356b467e57635991e26ae6f0ec9accb537e79471b70d70
+updated: 2017-09-07T12:00:34.193159988-05:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: 2bd8b58cf4275aeb086ade613de226773e29e853
@@ -47,8 +47,6 @@ imports:
   - models
 - name: github.com/elithrar/simple-scrypt
   version: 2325946f714c95de4a6088202c402fbdfa64163b
-- name: github.com/ghodss/yaml
-  version: 0ca9ea5df5451ffdf184b4428c902747c2c11cd7
 - name: github.com/go-ini/ini
   version: c787282c39ac1fc618827141a1f762240def08a3
 - name: github.com/golang/protobuf
@@ -202,6 +200,4 @@ imports:
   - status
   - tap
   - transport
-- name: gopkg.in/yaml.v2
-  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
 testImports: []

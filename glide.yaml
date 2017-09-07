@@ -7,7 +7,6 @@ import:
   - terraform
   - helper/resource
   - helper/schema
-- package: github.com/ghodss/yaml
 - package: github.com/digitalrebar/provision
   subpackages:
   - models
