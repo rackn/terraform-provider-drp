@@ -400,7 +400,7 @@ func (c *Client) GetMachineStatus(uuid string) resource.StateRefreshFunc {
 
 		machineStatus := "6"
 		if machineObject.Stage != "" {
-			if machineObject.Stage != "complete" {
+			if machineObject.Stage != "complete" || machineObject.Stage != "complete-nowait" {
 				machineStatus = "9"
 			}
 		} else {
