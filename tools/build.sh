@@ -48,7 +48,7 @@ VERFLAGS="-X github.com/digitalrebar/provision.RS_MAJOR_VERSION=$MajorV \
           -X github.com/digitalrebar/provision.BuildStamp=`date -u '+%Y-%m-%d_%I:%M:%S%p'` \
           -X github.com/digitalrebar/provision.GitHash=$GITHASH"
 
-arches=("amd64" "386")
+arches=("amd64")
 oses=("linux" "darwin" "windows")
 for arch in "${arches[@]}"; do
     for os in "${oses[@]}"; do
