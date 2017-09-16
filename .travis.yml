@@ -11,6 +11,7 @@ go:
 install:
 - ./tools/build.sh
 - ./tools/package.sh
+- ./tools/publish.sh
 script:
 - ./tools/test.sh
 after_success:

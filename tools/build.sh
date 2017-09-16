@@ -40,13 +40,13 @@ glide install
 
 echo "Version = $Prepart$MajorV.$MinorV.$PatchV$Extra-$GITHASH"
 
-VERFLAGS="-X github.com/digitalrebar/provision.RS_MAJOR_VERSION=$MajorV \
-          -X github.com/digitalrebar/provision.RS_MINOR_VERSION=$MinorV \
-          -X github.com/digitalrebar/provision.RS_PATCH_VERSION=$PatchV \
-          -X github.com/digitalrebar/provision.RS_EXTRA=$Extra \
-          -X github.com/digitalrebar/provision.RS_PREPART=$Prepart \
-          -X github.com/digitalrebar/provision.BuildStamp=`date -u '+%Y-%m-%d_%I:%M:%S%p'` \
-          -X github.com/digitalrebar/provision.GitHash=$GITHASH"
+VERFLAGS="-X main.RS_MAJOR_VERSION=$MajorV \
+          -X main.RS_MINOR_VERSION=$MinorV \
+          -X main.RS_PATCH_VERSION=$PatchV \
+          -X main.RS_EXTRA=$Extra \
+          -X main.RS_PREPART=$Prepart \
+          -X main.BuildStamp=`date -u '+%Y-%m-%d_%I:%M:%S%p'` \
+          -X main.GitHash=$GITHASH"
 
 arches=("amd64")
 oses=("linux" "darwin" "windows")
