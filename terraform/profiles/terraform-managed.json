@@ -3,5 +3,10 @@
   "Params": {
     "terraform/managed": true,
     "terraform/allocated": false
+  },
+  "Meta": {
+    "icon": "map outline",
+    "color": "blue",
+    "title": "RackN Content"
   }
 }

@@ -2,5 +2,10 @@
   "Name": "terraform/owner",
   "Schema": {
     "type": "string"
+  },
+  "Meta": {
+    "icon": "user circle outline",
+    "color": "blue",
+    "title": "RackN Content"
   }
 }
