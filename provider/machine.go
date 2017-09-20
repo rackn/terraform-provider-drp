@@ -14,19 +14,19 @@ import (
 
 // This function doesn't really *create* a new machine but, power an already registered
 // machine.
-func resourceDRPInstanceCreate(d *schema.ResourceData, meta interface{}) error {
-	log.Println("[DEBUG] [resourceDRPInstanceCreate] Launching new drp_instance")
+func resourceDRPMachineCreate(d *schema.ResourceData, meta interface{}) error {
+	log.Println("[DEBUG] [resourceDRPMachineCreate] Launching new drp_machine")
 	cc := meta.(*client.Client)
 
 	constraints, err := parseConstraints(d)
 	if err != nil {
-		log.Println("[ERROR] [resourceDRPInstanceCreate] Unable to parse constraints.")
+		log.Println("[ERROR] [resourceDRPMachineCreate] Unable to parse constraints.")
 		return err
 	}
 
 	machineObj, err := cc.AllocateMachine(constraints)
 	if err != nil {
-		log.Println("[ERROR] [resourceDRPInstanceCreate] Unable to allocate machine: %v", err)
+		log.Println("[ERROR] [resourceDRPMachineCreate] Unable to allocate machine: %v", err)
 		return err
 	}
 
@@ -35,17 +35,17 @@ func resourceDRPInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 	// Update the machine to request position
 	err = cc.UpdateMachine(machineObj, constraints)
 	if err != nil {
-		log.Println("[ERROR] [resourceDRPInstanceCreate] Unable to initialize machine: %v", err)
+		log.Println("[ERROR] [resourceDRPMachineCreate] Unable to initialize machine: %v", err)
 		if err2 := cc.ReleaseMachine(machineObj.UUID()); err2 != nil {
-			log.Println("[ERROR] [resourceDRPInstanceCreate] Unable to release machine: %v", err2)
+			log.Println("[ERROR] [resourceDRPMachineCreate] Unable to release machine: %v", err2)
 		}
 		return err
 	}
 
 	if err := cc.MachineDo(machineObj.UUID(), "nextbootpxe", url.Values{}); err != nil {
-		log.Printf("[ERROR] [resourceDRPInstanceCreate] Unable to mark the machine for pxe next boot: %s\n", machineObj.UUID())
+		log.Printf("[ERROR] [resourceDRPMachineCreate] Unable to mark the machine for pxe next boot: %s\n", machineObj.UUID())
 		if err2 := cc.ReleaseMachine(machineObj.UUID()); err2 != nil {
-			log.Println("[ERROR] [resourceDRPInstanceCreate] Unable to release machine: %v", err2)
+			log.Println("[ERROR] [resourceDRPMachineCreate] Unable to release machine: %v", err2)
 		}
 		return err
 	}
@@ -53,31 +53,31 @@ func resourceDRPInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 	// Power on and then cycle, if needed
 	powerAction := "poweron"
 	if err := cc.MachineDo(machineObj.UUID(), powerAction, url.Values{}); err != nil {
-		log.Printf("[ERROR] [resourceDRPInstanceCreate] Unable to power cycleup machine: %s\n", machineObj.UUID())
+		log.Printf("[ERROR] [resourceDRPMachineCreate] Unable to power cycleup machine: %s\n", machineObj.UUID())
 		if err2 := cc.ReleaseMachine(machineObj.UUID()); err2 != nil {
-			log.Println("[ERROR] [resourceDRPInstanceCreate] Unable to release machine: %v", err2)
+			log.Println("[ERROR] [resourceDRPMachineCreate] Unable to release machine: %v", err2)
 		}
 		return err
 	}
 
 	machineObj, err = cc.GetMachine(machineObj.UUID())
 	if err != nil {
-		log.Println("[ERROR] [resourceDRPInstanceCreate] Unable to release machine: %v", err)
+		log.Println("[ERROR] [resourceDRPMachineCreate] Unable to release machine: %v", err)
 		return err
 	}
 	if machineObj.BootEnv != cBootEnv {
 		powerAction := "powercycle"
 
 		if err := cc.MachineDo(machineObj.UUID(), powerAction, url.Values{}); err != nil {
-			log.Printf("[ERROR] [resourceDRPInstanceCreate] Unable to power cycleup machine: %s\n", machineObj.UUID())
+			log.Printf("[ERROR] [resourceDRPMachineCreate] Unable to power cycleup machine: %s\n", machineObj.UUID())
 			if err2 := cc.ReleaseMachine(machineObj.UUID()); err2 != nil {
-				log.Println("[ERROR] [resourceDRPInstanceCreate] Unable to release machine: %v", err2)
+				log.Println("[ERROR] [resourceDRPMachineCreate] Unable to release machine: %v", err2)
 			}
 			return err
 		}
 	}
 
-	log.Printf("[DEBUG] [resourceDRPInstanceCreate] Waiting for instance (%s) to become active\n", machineObj.UUID())
+	log.Printf("[DEBUG] [resourceDRPMachineCreate] Waiting for machine (%s) to become active\n", machineObj.UUID())
 	stateConf := &resource.StateChangeConf{
 		Pending:    []string{"9:"},
 		Target:     []string{"6:"},
@@ -89,10 +89,10 @@ func resourceDRPInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 
 	if _, err := stateConf.WaitForState(); err != nil {
 		if err2 := cc.ReleaseMachine(machineObj.UUID()); err2 != nil {
-			log.Println("[ERROR] [resourceDRPInstanceCreate] Unable to release machine: %v", err2)
+			log.Println("[ERROR] [resourceDRPMachineCreate] Unable to release machine: %v", err2)
 		}
 		return fmt.Errorf(
-			"[ERROR] [resourceDRPInstanceCreate] Error waiting for instance (%s) to become deployed: %s",
+			"[ERROR] [resourceDRPMachineCreate] Error waiting for machine (%s) to become deployed: %s",
 			machineObj.UUID(), err)
 	}
 
@@ -100,52 +100,52 @@ func resourceDRPInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func resourceDRPInstanceExists(d *schema.ResourceData, meta interface{}) (bool, error) {
+func resourceDRPMachineExists(d *schema.ResourceData, meta interface{}) (bool, error) {
 	cc := meta.(*client.Client)
-	log.Printf("[DEBUG] Exists instance (%s) information.\n", d.Id())
+	log.Printf("[DEBUG] Exists machine (%s) information.\n", d.Id())
 	return cc.ExistsMachine(d.Id())
 }
 
-func resourceDRPInstanceRead(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] Reading instance (%s) information.\n", d.Id())
+func resourceDRPMachineRead(d *schema.ResourceData, meta interface{}) error {
+	log.Printf("[DEBUG] Reading machine (%s) information.\n", d.Id())
 	return nil
 }
 
-func resourceDRPInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceDRPMachineUpdate(d *schema.ResourceData, meta interface{}) error {
 	cc := meta.(*client.Client)
-	log.Printf("[DEBUG] [resourceDRPInstanceUpdate] Modifying instance %s\n", d.Id())
+	log.Printf("[DEBUG] [resourceDRPMachineUpdate] Modifying machine %s\n", d.Id())
 
 	constraints, err := parseConstraints(d)
 	if err != nil {
-		log.Println("[ERROR] [resourceDRPInstanceUpdate] Unable to parse constraints.")
+		log.Println("[ERROR] [resourceDRPMachineUpdate] Unable to parse constraints.")
 		return err
 	}
 
 	machineObj, err := cc.GetMachine(d.Id())
 	if err != nil {
-		log.Println("[ERROR] [resourceDRPInstanceUpdate] Failed to get machine: %v", err)
+		log.Println("[ERROR] [resourceDRPMachineUpdate] Failed to get machine: %v", err)
 		return err
 	}
 
 	// Update the machine to request position
 	err = cc.UpdateMachine(machineObj, constraints)
 	if err != nil {
-		log.Println("[ERROR] [resourceDRPInstanceUpdate] Unable to initialize machine: %v", err)
+		log.Println("[ERROR] [resourceDRPMachineUpdate] Unable to initialize machine: %v", err)
 		return err
 	}
 
-	log.Printf("[DEBUG] Done Modifying instance %s", d.Id())
+	log.Printf("[DEBUG] Done Modifying machine %s", d.Id())
 	return nil
 }
 
-// This function doesn't really *delete* a drp managed instance but releases (read, turns off) the machine.
-func resourceDRPInstanceDelete(d *schema.ResourceData, meta interface{}) error {
+// This function doesn't really *delete* a drp managed machine but releases (read, turns off) the machine.
+func resourceDRPMachineDelete(d *schema.ResourceData, meta interface{}) error {
 	cc := meta.(*client.Client)
-	log.Printf("[DEBUG] Deleting instance %s\n", d.Id())
+	log.Printf("[DEBUG] Deleting machine %s\n", d.Id())
 
 	machineObj, err := cc.GetMachine(d.Id())
 	if err != nil {
-		log.Println("[ERROR] [resourceDRPInstanceDelete] Failed to get machine: %v", err)
+		log.Println("[ERROR] [resourceDRPMachineDelete] Failed to get machine: %v", err)
 		return err
 	}
 
@@ -159,7 +159,7 @@ func resourceDRPInstanceDelete(d *schema.ResourceData, meta interface{}) error {
 	// Update the machine to request position
 	err = cc.UpdateMachine(machineObj, retVal)
 	if err != nil {
-		log.Println("[ERROR] [resourceDRPInstanceDelete] Unable to reset machine: %v", err)
+		log.Println("[ERROR] [resourceDRPMachineDelete] Unable to reset machine: %v", err)
 		return err
 	}
 
@@ -168,13 +168,13 @@ func resourceDRPInstanceDelete(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if err := cc.MachineDo(machineObj.UUID(), "nextbootpxe", url.Values{}); err != nil {
-		log.Printf("[ERROR] [resourceDRPInstanceRelease] Unable to mark the machine for pxe next boot: %s\n", machineObj.UUID())
+		log.Printf("[ERROR] [resourceDRPMachineRelease] Unable to mark the machine for pxe next boot: %s\n", machineObj.UUID())
 	}
 	if err := cc.MachineDo(machineObj.UUID(), "powercycle", url.Values{}); err != nil {
-		log.Printf("[ERROR] [resourceDRPInstanceRelease] Unable to power cycle machine: %s\n", machineObj.UUID())
+		log.Printf("[ERROR] [resourceDRPMachineRelease] Unable to power cycle machine: %s\n", machineObj.UUID())
 	}
 
-	log.Printf("[DEBUG] [resourceDRPInstanceDelete] Machine (%s) released", d.Id())
+	log.Printf("[DEBUG] [resourceDRPMachineDelete] Machine (%s) released", d.Id())
 
 	d.SetId("")
 
@@ -239,14 +239,14 @@ func parseConstraints(d *schema.ResourceData) (url.Values, error) {
 	return retVal, nil
 }
 
-func resourceDRPInstance() *schema.Resource {
-	log.Println("[DEBUG] [resourceDRPInstance] Initializing data structure")
+func resourceDRPMachine() *schema.Resource {
+	log.Println("[DEBUG] [resourceDRPMachine] Initializing data structure")
 	return &schema.Resource{
-		Create: resourceDRPInstanceCreate,
-		Read:   resourceDRPInstanceRead,
-		Update: resourceDRPInstanceUpdate,
-		Delete: resourceDRPInstanceDelete,
-		Exists: resourceDRPInstanceExists,
+		Create: resourceDRPMachineCreate,
+		Read:   resourceDRPMachineRead,
+		Update: resourceDRPMachineUpdate,
+		Delete: resourceDRPMachineDelete,
+		Exists: resourceDRPMachineExists,
 
 		SchemaVersion: 1,
 
@@ -254,13 +254,11 @@ func resourceDRPInstance() *schema.Resource {
 			"bootenv": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: true,
 			},
 
 			"stage": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: true,
 			},
 
 			"owner": {

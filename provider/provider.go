@@ -40,7 +40,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"drp_instance": resourceDRPInstance(),
+			"drp_machine": resourceDRPMachine(),
 		},
 
 		ConfigureFunc: providerConfigure,
