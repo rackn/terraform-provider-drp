@@ -4,7 +4,7 @@ provider "drp" {
   api_url      = "https://127.0.0.1:8092"
 }
 
-resource "drp_instance" "one_random_node" {
+resource "drp_machine" "one_random_node" {
   count = 1
 
   # Settable values
@@ -23,12 +23,10 @@ resource "drp_instance" "one_random_node" {
   parameters = [
     {
       name = "fred"
-
       value = "tuesday"
     },
     {
       name = "jill"
-
       value = "thursday"
     },
   ]
@@ -36,7 +34,6 @@ resource "drp_instance" "one_random_node" {
   # Name, UUID, and Address are unique forcing singletons
   filters = [{
     name = "Name"
-
     value = "greg2"
   }]
 }
