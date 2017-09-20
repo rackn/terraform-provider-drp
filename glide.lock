@@ -1,12 +1,12 @@
 hash: a9748f07e377c76148356b467e57635991e26ae6f0ec9accb537e79471b70d70
-updated: 2017-09-07T12:00:34.193159988-05:00
+updated: 2017-09-19T16:54:47.125941829-05:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: 2bd8b58cf4275aeb086ade613de226773e29e853
   subpackages:
   - cidr
 - name: github.com/aws/aws-sdk-go
-  version: 8d9e3039553a1f8ca137750a6eeed5fb5d62d7e6
+  version: 8c31c1830194d67d74e23a7ba81bb2768849d56c
   subpackages:
   - aws
   - aws/awserr
@@ -42,7 +42,7 @@ imports:
   subpackages:
   - spew
 - name: github.com/digitalrebar/provision
-  version: da0c1d2ce9601f3cc55cebdd002186ffb8764c11
+  version: b70cf8ee1f61844a6d64070a8b272c2bec512204
   subpackages:
   - models
 - name: github.com/elithrar/simple-scrypt
@@ -50,7 +50,7 @@ imports:
 - name: github.com/go-ini/ini
   version: c787282c39ac1fc618827141a1f762240def08a3
 - name: github.com/golang/protobuf
-  version: ab9f9a6dab164b7d1246e0e688b0ab7b94d8553e
+  version: ae59567b9aab61b50b2590679a62c3c044030b61
   subpackages:
   - proto
   - ptypes
@@ -59,8 +59,10 @@ imports:
   - ptypes/timestamp
 - name: github.com/hashicorp/errwrap
   version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
+- name: github.com/hashicorp/go-cleanhttp
+  version: 3573b8b52aa7b37b9358d966a898feb387f62437
 - name: github.com/hashicorp/go-getter
-  version: c0d4e3e5abc92827485d2be6d9fba28952f99cdb
+  version: 56c651a79a6eec93e6ef074fe9e57fefb26b8b85
   subpackages:
   - helper/url
 - name: github.com/hashicorp/go-hclog
@@ -72,9 +74,9 @@ imports:
 - name: github.com/hashicorp/go-uuid
   version: 64130c7a86d732268a38cb04cfbaf0cc987fda98
 - name: github.com/hashicorp/go-version
-  version: 03c5bf6be031b6dd45afec16b1cf94fc8938bc77
+  version: fc61389e27c71d120f87031ca8c88a3428f372dd
 - name: github.com/hashicorp/hcl
-  version: 8f6b1344a92ff8877cf24a5de9177bf7d0a2a187
+  version: 68e816d1c783414e79bc65b3994d9ab6b0a722ab
   subpackages:
   - hcl/ast
   - hcl/parser
@@ -148,14 +150,14 @@ imports:
 - name: github.com/xeipuuv/gojsonreference
   version: e02fc20de94c78484cd5ffb007f8af96be030a45
 - name: github.com/xeipuuv/gojsonschema
-  version: 0c8571ac0ce161a5feb57375a9cdf148c98c0f70
+  version: 3f523f4c14b6e925da10475eb0447c2f28614aac
 - name: golang.org/x/crypto
-  version: 81e90905daefcd6fd217b62423c0908922eadb30
+  version: 7d9177d70076375b9a59c8fde23d52d9c4a7ecd5
   subpackages:
   - pbkdf2
   - scrypt
 - name: golang.org/x/net
-  version: 66aacef3dd8a676686c7ae3716979581e8b03c47
+  version: 8351a756f30f1297fe94bbf4b767ec589c6ea6d0
   subpackages:
   - bpf
   - context
@@ -169,18 +171,18 @@ imports:
   - lex/httplex
   - trace
 - name: golang.org/x/text
-  version: 18c65dde6afd36dbc39197ca72008895b8dfbfb6
+  version: 1cbadb444a806fd9430d14ad08967ed91da4fa0a
   subpackages:
   - secure/bidirule
   - transform
   - unicode/bidi
   - unicode/norm
 - name: google.golang.org/genproto
-  version: 595979c8a7bf586b2d293fb42246bf91a0b893d9
+  version: 1e559d0a00eef8a9a43151db4665280bd8dd5886
   subpackages:
   - googleapis/rpc/status
 - name: google.golang.org/grpc
-  version: 91999f444f2aa89f2f873c8429a424701309bec4
+  version: a7dba25a82d8eb0346674b4f8c9a189959fc3bf7
   subpackages:
   - balancer
   - codes

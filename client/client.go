@@ -67,43 +67,6 @@ func (c *Client) buildRequest(method, path string, data io.Reader) (*http.Reques
 	return request, nil
 }
 
-// GREG: Remove these when they are moved to models.
-type Stat struct {
-	// required: true
-	Name string `json:"name"`
-	// required: true
-	Count int `json:"count"`
-}
-
-// swagger:model
-type Info struct {
-	// required: true
-	Arch string `json:"arch"`
-	// required: true
-	Os string `json:"os"`
-	// required: true
-	Version string `json:"version"`
-	// required: true
-	Id string `json:"id"`
-	// required: true
-	ApiPort int `json:"api_port"`
-	// required: true
-	FilePort int `json:"file_port"`
-	// required: true
-	TftpEnabled bool `json:"tftp_enabled"`
-	// required: true
-	DhcpEnabled bool `json:"dhcp_enabled"`
-	// required: true
-	ProvisionerEnabled bool `json:"prov_enabled"`
-	// required: true
-	Stats []*Stat `json:"stats"`
-}
-
-type UserToken struct {
-	Token string
-	Info  Info
-}
-
 func (c *Client) getToken(machineId string) (string, error) {
 	request, err := c.buildRequest("GET", "users/"+c.APIUser+"/token", nil)
 	if err != nil {
@@ -139,7 +102,7 @@ func (c *Client) getToken(machineId string) (string, error) {
 		}
 
 		// Gots data
-		var data UserToken
+		var data models.UserToken
 		err := json.NewDecoder(response.Body).Decode(&data)
 		if err != nil {
 			return "", fmt.Errorf("getToken: unmarshall error: %v", err)
@@ -305,22 +268,48 @@ func (c *Client) ReleaseMachine(uuid string) error {
 	if machine, err := c.getSingleMachine(uuid); err != nil {
 		return err
 	} else {
-		patch := jsonpatch2.Patch{}
+		for {
+			var baseObj []byte
+			var merged []byte
+			var err error
+			if baseObj, err = json.Marshal(machine); err != nil {
+				return fmt.Errorf("Error marshalling baseObj: %v", err)
+			}
 
-		p_test := jsonpatch2.Operation{Op: "test", Path: "/Profile/Params/terraform/allocated",
-			From: "", Value: true}
-		patch = append(patch, p_test)
+			if machine.Profile.Params == nil {
+				machine.Profile.Params = map[string]interface{}{}
+			}
 
-		p_repl := jsonpatch2.Operation{Op: "replace", Path: "/Profile/Params/terraform/allocated",
-			From: "", Value: false}
-		patch = append(patch, p_repl)
+			// Force this back through discovery
+			machine.Profile.Params["terraform/allocated"] = false
+			machine.Profile.Params["terraform/managed"] = false
 
-		err = c.doPatch("machines/"+machine.UUID(), patch, machine)
-		if err != nil {
-			return err
+			if merged, err = json.Marshal(machine); err != nil {
+				return fmt.Errorf("Error marshalling merged: %v", err)
+			}
+
+			patch := jsonpatch2.Patch{}
+			if pdata, err := jsonpatch2.Generate(baseObj, merged, true); err != nil {
+				return fmt.Errorf("Error generating patch: %v", err)
+			} else if err := utils.Remarshal(&pdata, &patch); err != nil {
+				return fmt.Errorf("Error translating patch: %v", err)
+			}
+
+			retMachine := &models.Machine{}
+			err = c.doPatch("machines/"+machine.UUID(), patch, retMachine)
+			if err != nil {
+				berr, ok := err.(*models.Error)
+				if ok {
+					// If we get a patch error, the machine was allocated while we were
+					// waiting.  Try again.
+					if berr.Type == "JsonPatchError" {
+						continue
+					}
+				}
+				return err
+			}
+			return nil
 		}
-
-		return nil
 	}
 }
 
@@ -389,8 +378,19 @@ func (c *Client) UpdateMachine(machineObj *models.Machine, constraints url.Value
 	return c.doPatch("machines/"+machineObj.UUID(), patch, machineObj)
 }
 
+func (c *Client) ExistsMachine(uuid string) (bool, error) {
+	log.Printf("[DEBUG] [ExistsMachine] Getting stat of machine: %s", uuid)
+	_, err := c.getSingleMachine(uuid)
+	return err == nil, err
+}
+
+func (c *Client) GetMachine(uuid string) (*models.Machine, error) {
+	log.Printf("[DEBUG] [GetMachine] Getting machine: %s", uuid)
+	return c.getSingleMachine(uuid)
+}
+
 func (c *Client) GetMachineStatus(uuid string) resource.StateRefreshFunc {
-	log.Printf("[DEBUG] [getMachineStatus] Getting stat of machine: %s", uuid)
+	log.Printf("[DEBUG] [getMachineStatus] Getting status of machine: %s", uuid)
 	return func() (interface{}, string, error) {
 		machineObject, err := c.getSingleMachine(uuid)
 		if err != nil {
