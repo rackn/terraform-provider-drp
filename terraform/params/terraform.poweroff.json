@@ -2,5 +2,10 @@
   "Name": "terraform/poweroff",
   "Schema": {
     "type": "boolean"
+  },
+  "Meta": {
+    "icon": "power cord",
+    "color": "black",
+    "title": "RackN Content"
   }
 }

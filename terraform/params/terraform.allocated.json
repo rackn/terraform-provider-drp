@@ -2,5 +2,10 @@
   "Name": "terraform/allocated",
   "Schema": {
     "type": "boolean"
+  },
+  "Meta": {
+    "icon": "hand rock",
+    "color": "yellow",
+    "title": "RackN Content"
   }
 }
