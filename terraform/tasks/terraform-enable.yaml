@@ -7,3 +7,7 @@ Templates:
   - ID: "terraform-enable.sh.tmpl"
     Name: "The terraform enable script"
     Path: ""
+Meta:
+  icon: "map outline"
+  color: "blue"
+  title: "RackN Content"
