@@ -1,5 +1,6 @@
 {
   "Name": "terraform/poweroff",
+  "Description": "Indicates whether the machine should be powered off while awaiting allocation by terraform",
   "Schema": {
     "type": "boolean"
   },

@@ -1,5 +1,6 @@
 {
   "Name": "terraform/owner",
+  "Description": "Helper parameter that indicates who allocated this machine",
   "Schema": {
     "type": "string"
   },
