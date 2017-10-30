@@ -4,6 +4,7 @@ BootEnv: "sledgehammer"
 Description: "marks a machine as managed by terraform and ready for allocation"
 Tasks:
   - "terraform-enable"
+  - "change-stage"
 Meta:
   icon: "map outline"
   color: "green"
