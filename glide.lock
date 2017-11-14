@@ -1,5 +1,5 @@
-hash: a9748f07e377c76148356b467e57635991e26ae6f0ec9accb537e79471b70d70
-updated: 2017-09-19T16:54:47.125941829-05:00
+hash: e21916d47a83d4cf0d935955b779e6cff883a95793a3fa1f6dc3ad07b72e00d8
+updated: 2017-11-14T16:51:15.430648-06:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: 2bd8b58cf4275aeb086ade613de226773e29e853
@@ -37,26 +37,36 @@ imports:
   version: 9fd32a8b3d3d3f9d43c341bfe098430e07609480
   subpackages:
   - netrc
+- name: github.com/boltdb/bolt
+  version: 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
 - name: github.com/davecgh/go-spew
   version: a476722483882dd40b8111f0eb64e1d7f43f56e4
   subpackages:
   - spew
 - name: github.com/digitalrebar/provision
-  version: b70cf8ee1f61844a6d64070a8b272c2bec512204
+  version: 2ab654478528d1ee59781f7d53bc8f8b9c6853dd
   subpackages:
   - models
+- name: github.com/digitalrebar/store
+  version: f88fa4df9c617dc0bbd7b4361fd882dabbc44ad6
 - name: github.com/elithrar/simple-scrypt
   version: 2325946f714c95de4a6088202c402fbdfa64163b
+- name: github.com/ghodss/yaml
+  version: 0ca9ea5df5451ffdf184b4428c902747c2c11cd7
 - name: github.com/go-ini/ini
   version: c787282c39ac1fc618827141a1f762240def08a3
 - name: github.com/golang/protobuf
-  version: ae59567b9aab61b50b2590679a62c3c044030b61
+  version: ab9f9a6dab164b7d1246e0e688b0ab7b94d8553e
   subpackages:
   - proto
   - ptypes
   - ptypes/any
   - ptypes/duration
   - ptypes/timestamp
+- name: github.com/hashicorp/consul
+  version: a0b974620c29ec9372fa0583b4f1d0f0315062c8
+  subpackages:
+  - api
 - name: github.com/hashicorp/errwrap
   version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
 - name: github.com/hashicorp/go-cleanhttp
@@ -71,6 +81,8 @@ imports:
   version: 83588e72410abfbe4df460eeb6f30841ae47d4c4
 - name: github.com/hashicorp/go-plugin
   version: 3e6d191694b5a3a2b99755f31b47fa209e4bcd09
+- name: github.com/hashicorp/go-rootcerts
+  version: 6bb64b370b90e7ef1fa532be9e591a81c3493e00
 - name: github.com/hashicorp/go-uuid
   version: 64130c7a86d732268a38cb04cfbaf0cc987fda98
 - name: github.com/hashicorp/go-version
@@ -94,6 +106,10 @@ imports:
   - scanner
 - name: github.com/hashicorp/logutils
   version: 0dc08b1671f34c4250ce212759ebd880f743d883
+- name: github.com/hashicorp/serf
+  version: b84a66cc5575994cb672940d244a2404141688c0
+  subpackages:
+  - coordinate
 - name: github.com/hashicorp/terraform
   version: 277bbf65d1141207dbb30485bf124b1dba08f80f
   subpackages:
@@ -150,14 +166,14 @@ imports:
 - name: github.com/xeipuuv/gojsonreference
   version: e02fc20de94c78484cd5ffb007f8af96be030a45
 - name: github.com/xeipuuv/gojsonschema
-  version: 3f523f4c14b6e925da10475eb0447c2f28614aac
+  version: 0c8571ac0ce161a5feb57375a9cdf148c98c0f70
 - name: golang.org/x/crypto
-  version: 7d9177d70076375b9a59c8fde23d52d9c4a7ecd5
+  version: 81e90905daefcd6fd217b62423c0908922eadb30
   subpackages:
   - pbkdf2
   - scrypt
 - name: golang.org/x/net
-  version: 8351a756f30f1297fe94bbf4b767ec589c6ea6d0
+  version: 66aacef3dd8a676686c7ae3716979581e8b03c47
   subpackages:
   - bpf
   - context
@@ -170,8 +186,12 @@ imports:
   - ipv4
   - lex/httplex
   - trace
+- name: golang.org/x/sys
+  version: 2d6f6f883a06fc0d5f4b14a81e4c28705ea64c15
+  subpackages:
+  - unix
 - name: golang.org/x/text
-  version: 1cbadb444a806fd9430d14ad08967ed91da4fa0a
+  version: 18c65dde6afd36dbc39197ca72008895b8dfbfb6
   subpackages:
   - secure/bidirule
   - transform
@@ -202,4 +222,6 @@ imports:
   - status
   - tap
   - transport
+- name: gopkg.in/yaml.v2
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
 testImports: []
