@@ -251,7 +251,7 @@ func (c *Client) AllocateMachine(params url.Values) (*models.Machine, error) {
 				if ok {
 					// If we get a patch error, the machine was allocated while we were
 					// waiting.  Try again.
-					if berr.Type == "JsonPatchError" {
+					if berr.Type == "PATCH" && (berr.Code == 406 || berr.Code == 409) {
 						continue
 					}
 				}
