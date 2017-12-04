@@ -44,7 +44,7 @@ imports:
   subpackages:
   - spew
 - name: github.com/digitalrebar/provision
-  version: 2ab654478528d1ee59781f7d53bc8f8b9c6853dd
+  version: 3af10535d31b6367778d34446d3092ed543aa059
   subpackages:
   - models
 - name: github.com/digitalrebar/store
