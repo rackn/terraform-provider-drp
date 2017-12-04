@@ -13,12 +13,10 @@ case $(uname -s) in
         exit 1;;
 esac
 
-if [ ! -e drp ] ; then
-    mkdir -p drp
-    cd drp
-    curl -fsSL https://raw.githubusercontent.com/digitalrebar/provision/master/tools/install.sh | bash -s -- --nocontent --isolated --drp-version=tip install
-    cd ..
-fi
+
+
+go get -u github.com/digitalrebar/provision/cmds/drbundler
+PATH=$PATH:$GOPATH/bin
 
 . tools/version.sh
 
@@ -27,10 +25,9 @@ version="$Prepart$MajorV.$MinorV.$PatchV$Extra-$GITHASH"
 for i in terraform ; do
     cd $i
     echo -n "$version" > ._Version.meta
-    ../drp/drpcli contents bundle $i.yaml Version="$version" --format=yaml
-    $shasum $i.yaml > $i.sha256
-    mv $i.* ..
     cd ..
+    drbundler $i $i.yaml
+    $shasum $i.yaml > $i.sha256
 done
 
 tmpdir="$(mktemp -d /tmp/rs-bundle-XXXXXXXX)"
