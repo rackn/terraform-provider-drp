@@ -29,8 +29,6 @@ deploy:
   file:
   - terraform-provider-drp.zip
   - terraform-provider-drp.sha256
-  - terraform.yaml
-  - terraform.sha256
   skip_cleanup: true
   on:
     repo: rackn/terraform-provider-drp

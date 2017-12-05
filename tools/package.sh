@@ -13,22 +13,9 @@ case $(uname -s) in
         exit 1;;
 esac
 
-
-
-go get -u github.com/digitalrebar/provision/cmds/drbundler
-PATH=$PATH:$GOPATH/bin
-
 . tools/version.sh
 
 version="$Prepart$MajorV.$MinorV.$PatchV$Extra-$GITHASH"
-
-for i in terraform ; do
-    cd $i
-    echo -n "$version" > ._Version.meta
-    cd ..
-    drbundler $i $i.yaml
-    $shasum $i.yaml > $i.sha256
-done
 
 tmpdir="$(mktemp -d /tmp/rs-bundle-XXXXXXXX)"
 cp -a bin "$tmpdir"
