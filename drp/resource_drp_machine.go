@@ -1,4 +1,4 @@
-package provider
+package drp
 
 import (
 	"fmt"
@@ -9,7 +9,6 @@ import (
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/rackn/terraform-provider-drp/client"
 )
 
 // This function doesn't really *create* a new machine but, power an already registered
