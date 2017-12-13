@@ -3,6 +3,8 @@ package drp
 import (
 	"fmt"
 	"log"
+	"os"
+	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
@@ -20,7 +22,7 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The api key for API operations",
-				DefaultFunc: envDefaultFunc("RS_TOKEN"),
+				DefaultFunc: schema.EnvDefaultFunc("RS_TOKEN", nil),
 			},
 			"api_user": {
 				Type:        schema.TypeString,
@@ -38,32 +40,22 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The DRP server URL. ie: https://1.2.3.4:8092",
-				DefaultFunc: envDefaultFunc("RS_ENDPOINT"),
+				DefaultFunc: schema.EnvDefaultFunc("RS_ENDPOINT", nil),
 			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"drp_machine": resourceDRPMachine(),
+			"drp_machine": resourceMachine(),
 		},
 
 		ConfigureFunc: providerConfigure,
 	}
 }
 
-func envDefaultFunc(k string) schema.SchemaDefaultFunc {
-	return func() (interface{}, error) {
-		if v := os.Getenv(k); v != "" {
-			return v, nil
-		}
-
-		return nil, nil
-	}
-}
-
 func envDefaultKeyFunc(k, part string) schema.SchemaDefaultFunc {
 	return func() (interface{}, error) {
 		if v := os.Getenv(k); v != "" {
-			parts := strings.SplitN(kv, ":", 2)
+			parts := strings.SplitN(v, ":", 2)
 			if len(parts) < 2 {
 				return nil, fmt.Errorf("RS_KEY has not enough parts")
 			}
@@ -85,24 +77,28 @@ func envDefaultKeyFunc(k, part string) schema.SchemaDefaultFunc {
  */
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	log.Println("[DEBUG] Configuring the DRP provider")
-	cc := Client{
-		APIURL: d.Get("api_url").(string),
+	config := Config{
+		Url: d.Get("api_url").(string),
 	}
 
 	if key := d.Get("api_key"); key != nil {
-		cc.APIKey = key.(string)
+		config.Token = key.(string)
 	}
 	if user := d.Get("api_user"); user != nil {
-		cc.APIUser = user.(string)
-		cc.APIPassword = d.Get("api_password").(string)
+		config.Username = user.(string)
+		config.Password = d.Get("api_password").(string)
 	}
 
-	if cc.APIKey == "" && cc.APIUser == "" {
+	if config.Token == "" && config.Username == "" {
 		return nil, fmt.Errorf("drp provider requires either user or token ids")
 	}
-	if cc.APIUser != "" && cc.APIPassword == "" {
+	if config.Username != "" && config.Password == "" {
 		return nil, fmt.Errorf("drp provider requires a password for the specified user")
 	}
 
-	return cc.Client()
+	if err := config.validateAndConnect(); err != nil {
+		return nil, err
+	}
+
+	return &config, nil
 }

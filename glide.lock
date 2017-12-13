@@ -1,5 +1,5 @@
-hash: e21916d47a83d4cf0d935955b779e6cff883a95793a3fa1f6dc3ad07b72e00d8
-updated: 2017-11-14T16:51:15.430648-06:00
+hash: 3e5186e8b7b5da2b89790346056808ffa79815712ddf914829c72069276830ef
+updated: 2017-12-05T14:12:36.026914-06:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: 2bd8b58cf4275aeb086ade613de226773e29e853
@@ -44,8 +44,9 @@ imports:
   subpackages:
   - spew
 - name: github.com/digitalrebar/provision
-  version: 3af10535d31b6367778d34446d3092ed543aa059
+  version: 6f6bb1ea9ce85b62515c66b81db32b9ccf3e0afd
   subpackages:
+  - api
   - models
 - name: github.com/digitalrebar/store
   version: f88fa4df9c617dc0bbd7b4361fd882dabbc44ad6
@@ -63,6 +64,8 @@ imports:
   - ptypes/any
   - ptypes/duration
   - ptypes/timestamp
+- name: github.com/gorilla/websocket
+  version: a69d9f6de432e2c6b296a947d8a5ee88f68522cf
 - name: github.com/hashicorp/consul
   version: a0b974620c29ec9372fa0583b4f1d0f0315062c8
   subpackages:
@@ -158,7 +161,7 @@ imports:
   - internal/xlog
   - lzma
 - name: github.com/VictorLowther/jsonpatch2
-  version: c7b50f49dce1ebe7c627bf0a92c87b633a45bf43
+  version: 728f2fee2a186b5764d9c9a8fa904279a22b1960
   subpackages:
   - utils
 - name: github.com/xeipuuv/gojsonpointer
