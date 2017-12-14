@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/digitalrebar/provision/models"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -16,7 +17,7 @@ import (
  */
 func Provider() terraform.ResourceProvider {
 	log.Println("[DEBUG] Initializing the DRP provider")
-	return &schema.Provider{
+	p := &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"api_key": {
 				Type:        schema.TypeString,
@@ -50,6 +51,16 @@ func Provider() terraform.ResourceProvider {
 
 		ConfigureFunc: providerConfigure,
 	}
+
+	for _, m := range models.All() {
+		pref := m.Prefix()
+		spref := strings.TrimRight(pref, "s")
+		if _, ok := p.ResourcesMap[pref]; !ok {
+			p.ResourcesMap[fmt.Sprintf("drp_%s", spref)] = resourceGeneric(pref)
+		}
+	}
+
+	return p
 }
 
 func envDefaultKeyFunc(k, part string) schema.SchemaDefaultFunc {

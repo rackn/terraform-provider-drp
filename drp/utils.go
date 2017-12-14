@@ -28,7 +28,6 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 	val := reflect.ValueOf(m).Elem()
 
 	for i := 0; i < val.NumField(); i++ {
-		valueField := val.Field(i)
 		typeField := val.Type().Field(i)
 		tag := typeField.Tag
 
@@ -86,10 +85,16 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 				sm[typeField.Name] = buildSchemaListFromObject(&models.Param{})
 			case "models.AvailableAction":
 				sm[typeField.Name] = buildSchemaListFromObject(&models.AvailableAction{})
+			case "uint8":
+				sm[typeField.Name] = &schema.Schema{
+					Type:     schema.TypeString,
+					Optional: true,
+					Computed: true,
+				}
 			default:
-				log.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Field Value: %v,\t Tag Value: %s\n",
+				log.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Tag Value: %s\n",
 					typeField.Name, typeField.Type,
-					valueField.Interface(), tag.Get("tag_name"))
+					tag.Get("tag_name"))
 			}
 			continue
 		}
@@ -98,7 +103,7 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 		case "models.OsInfo":
 			// Singleton struct - encode as a list for now.
 			sm[typeField.Name] = buildSchemaListFromObject(&models.OsInfo{})
-		case "string", "[]uint8", "net.IP", "uuid.UUID", "time.Time":
+		case "string", "net.IP", "uuid.UUID", "time.Time":
 			sm[typeField.Name] = &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
@@ -117,13 +122,19 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 				Computed: true,
 			}
 		default:
-			log.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Field Value: %v,\t Tag Value: %s\n",
+			log.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Tag Value: %s\n",
 				typeField.Name, typeField.Type,
-				valueField.Interface(), tag.Get("tag_name"))
+				tag.Get("tag_name"))
 		}
 	}
 
 	return sm
+}
+
+func resourceGeneric(pref string) *schema.Resource {
+	log.Printf("[DEBUG] [resourceGeneric] Initializing data structure: %s\n", pref)
+	m, _ := models.New(pref)
+	return buildSchema(m)
 }
 
 func buildSchema(m models.Model) *schema.Resource {
@@ -178,6 +189,8 @@ func updateResourceData(m models.Model, d *schema.ResourceData) error {
 			switch listType {
 			case "string", "models.DhcpOption", "models.TemplateInfo", "models.Param", "models.AvailableAction":
 				d.Set(typeField.Name, valueField.Interface())
+			case "uint8":
+				d.Set(typeField.Name, fmt.Sprintf("%s", valueField.Interface()))
 			default:
 				log.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Field Value: %v,\t Tag Value: %s\n",
 					typeField.Name, typeField.Type,
@@ -189,7 +202,7 @@ func updateResourceData(m models.Model, d *schema.ResourceData) error {
 		switch typeField.Type.String() {
 		case "models.OsInfo":
 			d.Set(typeField.Name, []*models.OsInfo{valueField.Interface().(*models.OsInfo)})
-		case "string", "[]uint8", "net.IP", "uuid.UUID", "time.Time":
+		case "string", "net.IP", "uuid.UUID", "time.Time":
 			d.Set(typeField.Name, fmt.Sprintf("%s", valueField.Interface()))
 		case "bool":
 			d.Set(typeField.Name, valueField.Interface())
@@ -226,8 +239,11 @@ func buildModel(m models.Model, d *schema.ResourceData) (models.Model, error) {
 		// Meta is a constant map of strings (but shows up as a type of Meta - fix it)
 		if typeField.Name == "Meta" {
 			if d.HasChange("Meta") {
-				// GREG: This is not quite right
-				// valueField.Set(d.Get("Meta"))
+				valueField.Set(reflect.MakeMap(typeField.Type))
+				ms := d.Get("Meta").(map[string]string)
+				for k, v := range ms {
+					valueField.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(v))
+				}
 			}
 			continue
 		}
@@ -250,6 +266,7 @@ func buildModel(m models.Model, d *schema.ResourceData) (models.Model, error) {
 			case "models.TemplateInfo":
 			case "models.Param":
 			case "models.AvailableAction":
+			case "uint8":
 			default:
 				log.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Field Value: %v,\t Tag Value: %s\n",
 					typeField.Name, typeField.Type,
@@ -264,7 +281,6 @@ func buildModel(m models.Model, d *schema.ResourceData) (models.Model, error) {
 			if d.HasChange(typeField.Name) {
 				valueField.SetString(d.Get(typeField.Name).(string))
 			}
-		case "[]uint8":
 		case "net.IP":
 		case "uuid.UUID":
 		case "time.Time":
@@ -293,6 +309,13 @@ func createDefaultCreateFunction(m models.Model) func(*schema.ResourceData, inte
 		new, err := buildModel(m, d)
 		if err != nil {
 			return err
+		}
+
+		answer, err := cc.session.GetModel(new.Prefix(), new.Key())
+		if err == nil {
+			// GREG: Should we update this object.
+			d.SetId(answer.Key())
+			return updateResourceData(answer, d)
 		}
 
 		err = cc.session.CreateModel(new)
