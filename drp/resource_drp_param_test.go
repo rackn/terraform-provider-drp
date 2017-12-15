@@ -1,6 +1,7 @@
 package drp
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
@@ -128,7 +129,9 @@ func testAccDrpCheckParamExists(t *testing.T, n string, param *models.Param) res
 		}
 
 		if !reflect.DeepEqual(param, found) {
-			return fmt.Errorf("Param doesn't match: e:%#v a:%#v", param, found)
+			b1, _ := json.MarshalIndent(param, "", "  ")
+			b2, _ := json.MarshalIndent(found, "", "  ")
+			return fmt.Errorf("Param doesn't match: e:%s\na:%s", string(b1), string(b2))
 		}
 		return nil
 	}

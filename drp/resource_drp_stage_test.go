@@ -1,6 +1,7 @@
 package drp
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
@@ -167,7 +168,9 @@ func testAccDrpCheckStageExists(t *testing.T, n string, stage *models.Stage) res
 		}
 
 		if !reflect.DeepEqual(stage, found) {
-			return fmt.Errorf("Stage doesn't match: e:%#v a:%#v", stage, found)
+			b1, _ := json.MarshalIndent(stage, "", "  ")
+			b2, _ := json.MarshalIndent(found, "", "  ")
+			return fmt.Errorf("Stage doesn't match: e:%s\na:%s", string(b1), string(b2))
 		}
 		return nil
 	}

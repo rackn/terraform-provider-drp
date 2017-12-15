@@ -1,6 +1,7 @@
 package drp
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
@@ -158,7 +159,9 @@ func testAccDrpCheckProfileExists(t *testing.T, n string, profile *models.Profil
 		}
 
 		if !reflect.DeepEqual(profile, found) {
-			return fmt.Errorf("Profile doesn't match: e:%#v a:%#v", profile, found)
+			b1, _ := json.MarshalIndent(profile, "", "  ")
+			b2, _ := json.MarshalIndent(found, "", "  ")
+			return fmt.Errorf("Profile doesn't match: e:%s\na:%s", string(b1), string(b2))
 		}
 		return nil
 	}

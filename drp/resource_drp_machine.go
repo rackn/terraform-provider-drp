@@ -74,7 +74,7 @@ func allocateMachine(cc *Config, filters []string) (*models.Machine, error) {
 
 func releaseMachine(cc *Config, uuid string, tfManaged bool) error {
 	for {
-		machine, err := cc.session.GetModel("machine", uuid)
+		machine, err := cc.session.GetModel("machines", uuid)
 		if err != nil {
 			return nil
 		}

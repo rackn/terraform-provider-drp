@@ -1,6 +1,7 @@
 package drp
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
@@ -129,7 +130,9 @@ func testAccDrpCheckUserExists(t *testing.T, n string, user *models.User) resour
 		}
 
 		if !reflect.DeepEqual(user, found) {
-			return fmt.Errorf("User doesn't match: e:%#v a:%#v", user, found)
+			b1, _ := json.MarshalIndent(user, "", "  ")
+			b2, _ := json.MarshalIndent(found, "", "  ")
+			return fmt.Errorf("User doesn't match: e:%s\na:%s", string(b1), string(b2))
 		}
 		return nil
 	}

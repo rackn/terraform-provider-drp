@@ -1,6 +1,7 @@
 package drp
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
@@ -157,7 +158,9 @@ func testAccDrpCheckTaskExists(t *testing.T, n string, task *models.Task) resour
 		}
 
 		if !reflect.DeepEqual(task, found) {
-			return fmt.Errorf("Task doesn't match: e:%#v a:%#v", task, found)
+			b1, _ := json.MarshalIndent(task, "", "  ")
+			b2, _ := json.MarshalIndent(found, "", "  ")
+			return fmt.Errorf("Task doesn't match: e:%s\na:%s", string(b1), string(b2))
 		}
 		return nil
 	}

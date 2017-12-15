@@ -1,6 +1,7 @@
 package drp
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"testing"
@@ -162,7 +163,9 @@ func testAccDrpCheckPluginExists(t *testing.T, n string, plugin *models.Plugin) 
 		}
 
 		if !reflect.DeepEqual(plugin, found) {
-			return fmt.Errorf("Plugin doesn't match: e:%#v a:%#v", plugin, found)
+			b1, _ := json.MarshalIndent(plugin, "", "  ")
+			b2, _ := json.MarshalIndent(found, "", "  ")
+			return fmt.Errorf("Plugin doesn't match: e:%s\na:%s", string(b1), string(b2))
 		}
 		return nil
 	}

@@ -59,10 +59,13 @@ func Provider() terraform.ResourceProvider {
 			pref == "interfaces" || pref == "jobs" || pref == "leases" {
 			continue
 		}
+
 		spref := strings.TrimRight(pref, "s")
-		if _, ok := p.ResourcesMap[pref]; !ok {
-			p.ResourcesMap[fmt.Sprintf("drp_%s", spref)] = resourceGeneric(pref)
+		if pref == "machines" {
+			// Machine is already added, add raw_machine to manipulate raw machine objects
+			spref = "raw_machine"
 		}
+		p.ResourcesMap[fmt.Sprintf("drp_%s", spref)] = resourceGeneric(pref)
 	}
 
 	return p
