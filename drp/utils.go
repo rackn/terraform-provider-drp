@@ -3,11 +3,15 @@ package drp
 import (
 	"fmt"
 	"log"
+	"net"
 	"reflect"
 	"strings"
+	"time"
 
+	"github.com/VictorLowther/jsonpatch2/utils"
 	"github.com/digitalrebar/provision/models"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/pborman/uuid"
 )
 
 func buildSchemaListFromObject(m interface{}) *schema.Schema {
@@ -31,6 +35,11 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 		typeField := val.Type().Field(i)
 		tag := typeField.Tag
 
+		// Skip non-exported fields
+		if typeField.PkgPath != "" {
+			continue
+		}
+
 		// Skip the access and validation fields
 		if typeField.Name == "Access" || typeField.Name == "Validation" {
 			continue
@@ -41,8 +50,14 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 			continue
 		}
 
+		fieldName := typeField.Name
+		// Provider is reserved Terraform name
+		if fieldName == "Provider" {
+			fieldName = "PluginProvider"
+		}
+
 		// Meta is a constant map of strings (but shows up as a type of Meta - fix it)
-		if typeField.Name == "Meta" {
+		if fieldName == "Meta" {
 			sm["Meta"] = &schema.Schema{
 				Type: schema.TypeMap,
 				Elem: &schema.Schema{
@@ -55,21 +70,27 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 			continue
 		}
 
-		// This is a cluster.  Terraform doesn't
-		if typeField.Name == "Params" {
+		//
+		// This is a cluster.  Terraform doesn't generic interface{}
+		// basically, interface{} and map[string]interface{}
+		//
+		// Will try some things.
+		//
+		if fieldName == "Params" {
+			// GREG: FIGURE THIS OUT!!!
+			continue
+		}
+		if fieldName == "Schema" {
 			// GREG: FIGURE THIS OUT!!!
 			continue
 		}
 
 		if strings.HasPrefix(typeField.Type.String(), "[]") {
 			listType := typeField.Type.String()[2:]
-			if listType[0] == '*' {
-				listType = listType[1:]
-			}
 
 			switch listType {
 			case "string":
-				sm[typeField.Name] = &schema.Schema{
+				sm[fieldName] = &schema.Schema{
 					Type: schema.TypeList,
 					Elem: &schema.Schema{
 						Type: schema.TypeString,
@@ -77,23 +98,20 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 					Optional: true,
 					Computed: true,
 				}
-			case "models.DhcpOption":
-				sm[typeField.Name] = buildSchemaListFromObject(&models.DhcpOption{})
+			case "models.DhcpOption", "*models.DhcpOption":
+				sm[fieldName] = buildSchemaListFromObject(&models.DhcpOption{})
+
 			case "models.TemplateInfo":
-				sm[typeField.Name] = buildSchemaListFromObject(&models.TemplateInfo{})
-			case "models.Param":
-				sm[typeField.Name] = buildSchemaListFromObject(&models.Param{})
-			case "models.AvailableAction":
-				sm[typeField.Name] = buildSchemaListFromObject(&models.AvailableAction{})
+				sm[fieldName] = buildSchemaListFromObject(&models.TemplateInfo{})
 			case "uint8":
-				sm[typeField.Name] = &schema.Schema{
+				sm[fieldName] = &schema.Schema{
 					Type:     schema.TypeString,
 					Optional: true,
 					Computed: true,
 				}
 			default:
-				log.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Tag Value: %s\n",
-					typeField.Name, typeField.Type,
+				fmt.Printf("[DEBUG] UNKNOWN List Field Name: %s (%s),\t Tag Value: %s\n",
+					fieldName, typeField.Type,
 					tag.Get("tag_name"))
 			}
 			continue
@@ -102,28 +120,28 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 		switch typeField.Type.String() {
 		case "models.OsInfo":
 			// Singleton struct - encode as a list for now.
-			sm[typeField.Name] = buildSchemaListFromObject(&models.OsInfo{})
+			sm[fieldName] = buildSchemaListFromObject(&models.OsInfo{})
 		case "string", "net.IP", "uuid.UUID", "time.Time":
-			sm[typeField.Name] = &schema.Schema{
+			sm[fieldName] = &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
 			}
 		case "bool":
-			sm[typeField.Name] = &schema.Schema{
+			sm[fieldName] = &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
 				Computed: true,
 			}
-		case "int", "int32":
-			sm[typeField.Name] = &schema.Schema{
+		case "int", "int32", "uint8":
+			sm[fieldName] = &schema.Schema{
 				Type:     schema.TypeInt,
 				Optional: true,
 				Computed: true,
 			}
 		default:
-			log.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Tag Value: %s\n",
-				typeField.Name, typeField.Type,
+			fmt.Printf("[DEBUG] UNKNOWN Base Field Name: %s (%s),\t Tag Value: %s\n",
+				fieldName, typeField.Type,
 				tag.Get("tag_name"))
 		}
 	}
@@ -168,32 +186,46 @@ func updateResourceData(m models.Model, d *schema.ResourceData) error {
 			continue
 		}
 
+		fieldName := typeField.Name
+		// Provider is reserved Terraform name
+		if fieldName == "Provider" {
+			fieldName = "PluginProvider"
+		}
+
 		// Meta is a constant map of strings (but shows up as a type of Meta - fix it)
-		if typeField.Name == "Meta" {
+		if fieldName == "Meta" {
 			d.Set("Meta", valueField.Interface())
 			continue
 		}
 
-		// This is a cluster.  Terraform doesn't
-		if typeField.Name == "Params" {
+		//
+		// This is a cluster.  Terraform doesn't generic interface{}
+		// basically, interface{} and map[string]interface{}
+		//
+		// Will try some things.
+		//
+		if fieldName == "Params" {
 			// GREG: FIGURE THIS OUT!!!
+			fmt.Printf("[DEBUG] Params not support for push into terraform\n")
+			continue
+		}
+		if fieldName == "Schema" {
+			// GREG: FIGURE THIS OUT!!!
+			fmt.Printf("[DEBUG] Schema not support for push into terraform\n")
 			continue
 		}
 
 		if strings.HasPrefix(typeField.Type.String(), "[]") {
 			listType := typeField.Type.String()[2:]
-			if listType[0] == '*' {
-				listType = listType[1:]
-			}
 
 			switch listType {
-			case "string", "models.DhcpOption", "models.TemplateInfo", "models.Param", "models.AvailableAction":
-				d.Set(typeField.Name, valueField.Interface())
+			case "string", "*models.DhcpOption", "models.DhcpOption", "models.TemplateInfo":
+				d.Set(fieldName, valueField.Interface())
 			case "uint8":
-				d.Set(typeField.Name, fmt.Sprintf("%s", valueField.Interface()))
+				d.Set(fieldName, fmt.Sprintf("%s", valueField.Interface()))
 			default:
 				log.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Field Value: %v,\t Tag Value: %s\n",
-					typeField.Name, typeField.Type,
+					fieldName, typeField.Type,
 					valueField.Interface(), tag.Get("tag_name"))
 			}
 			continue
@@ -201,16 +233,16 @@ func updateResourceData(m models.Model, d *schema.ResourceData) error {
 
 		switch typeField.Type.String() {
 		case "models.OsInfo":
-			d.Set(typeField.Name, []*models.OsInfo{valueField.Interface().(*models.OsInfo)})
+			d.Set(fieldName, []models.OsInfo{valueField.Interface().(models.OsInfo)})
 		case "string", "net.IP", "uuid.UUID", "time.Time":
-			d.Set(typeField.Name, fmt.Sprintf("%s", valueField.Interface()))
+			d.Set(fieldName, fmt.Sprintf("%s", valueField.Interface()))
 		case "bool":
-			d.Set(typeField.Name, valueField.Interface())
-		case "int", "int32":
-			d.Set(typeField.Name, valueField.Interface().(int))
+			d.Set(fieldName, valueField.Interface())
+		case "int", "int32", "uint8":
+			d.Set(fieldName, valueField.Interface())
 		default:
 			log.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Field Value: %v,\t Tag Value: %s\n",
-				typeField.Name, typeField.Type,
+				fieldName, typeField.Type,
 				valueField.Interface(), tag.Get("tag_name"))
 		}
 	}
@@ -236,40 +268,66 @@ func buildModel(m models.Model, d *schema.ResourceData) (models.Model, error) {
 			continue
 		}
 
+		fieldName := typeField.Name
+		// Provider is reserved Terraform name
+		if fieldName == "Provider" {
+			fieldName = "PluginProvider"
+		}
+
+		if !d.HasChange(fieldName) {
+			continue
+		}
+
 		// Meta is a constant map of strings (but shows up as a type of Meta - fix it)
-		if typeField.Name == "Meta" {
-			if d.HasChange("Meta") {
-				valueField.Set(reflect.MakeMap(typeField.Type))
-				ms := d.Get("Meta").(map[string]string)
-				for k, v := range ms {
-					valueField.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(v))
-				}
+		if fieldName == "Meta" {
+			valueField.Set(reflect.MakeMap(typeField.Type))
+			ms := d.Get("Meta").(map[string]interface{})
+			for k, v := range ms {
+				valueField.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(v))
 			}
 			continue
 		}
 
-		// This is a cluster.  Terraform doesn't
-		if typeField.Name == "Params" {
+		//
+		// This is a cluster.  Terraform doesn't generic interface{}
+		// basically, interface{} and map[string]interface{}
+		//
+		// Will try some things.
+		//
+		if fieldName == "Params" {
+			fmt.Printf("[DEBUG] Params not support for push to DRP\n")
+			continue
+		}
+		if fieldName == "Schema" {
 			// GREG: FIGURE THIS OUT!!!
+			fmt.Printf("[DEBUG] Schema not support for push to DRP\n")
 			continue
 		}
 
 		if strings.HasPrefix(typeField.Type.String(), "[]") {
 			listType := typeField.Type.String()[2:]
-			if listType[0] == '*' {
-				listType = listType[1:]
-			}
+			subType := typeField.Type.Elem()
 
 			switch listType {
-			case "string":
-			case "models.DhcpOption":
-			case "models.TemplateInfo":
-			case "models.Param":
-			case "models.AvailableAction":
+			case "string", "models.TemplateInfo",
+				"models.DhcpOption", "*models.DhcpOption":
+
+				data := d.Get(fieldName).([]interface{})
+				v := reflect.MakeSlice(typeField.Type, 0, len(data))
+				for _, s := range data {
+					no := reflect.New(subType).Interface()
+					if err := utils.Remarshal(s, no); err != nil {
+						return nil, err
+					}
+					v = reflect.Append(v, reflect.Indirect(reflect.ValueOf(no)))
+				}
+				valueField.Set(v)
+
 			case "uint8":
+				fmt.Printf("[DEBUG] list of %s not support for push to DRP\n", listType)
 			default:
-				log.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Field Value: %v,\t Tag Value: %s\n",
-					typeField.Name, typeField.Type,
+				fmt.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Field Value: %v,\t Tag Value: %s\n",
+					fieldName, typeField.Type,
 					valueField.Interface(), tag.Get("tag_name"))
 			}
 			continue
@@ -277,24 +335,37 @@ func buildModel(m models.Model, d *schema.ResourceData) (models.Model, error) {
 
 		switch typeField.Type.String() {
 		case "models.OsInfo":
+			data := d.Get(fieldName).([]interface{})
+			for _, s := range data {
+				no := models.OsInfo{}
+				if err := utils.Remarshal(s, &no); err != nil {
+					return nil, err
+				}
+				valueField.Set(reflect.ValueOf(no))
+				break
+			}
 		case "string":
-			if d.HasChange(typeField.Name) {
-				valueField.SetString(d.Get(typeField.Name).(string))
-			}
+			valueField.SetString(d.Get(fieldName).(string))
 		case "net.IP":
+			ip := net.ParseIP(d.Get(fieldName).(string))
+			valueField.Set(reflect.ValueOf(ip))
 		case "uuid.UUID":
+			uu := uuid.Parse(d.Get(fieldName).(string))
+			valueField.Set(reflect.ValueOf(uu))
 		case "time.Time":
+			if t, e := time.Parse("2006-01-02 15:04:05.999999999 -0700 MST",
+				d.Get(fieldName).(string)); e != nil {
+				return nil, e
+			} else {
+				valueField.Set(reflect.ValueOf(t))
+			}
 		case "bool":
-			if d.HasChange(typeField.Name) {
-				valueField.SetBool(d.Get(typeField.Name).(bool))
-			}
-		case "int", "int32":
-			if d.HasChange(typeField.Name) {
-				valueField.SetInt(d.Get(typeField.Name).(int64))
-			}
+			valueField.SetBool(d.Get(fieldName).(bool))
+		case "int", "int32", "uint8":
+			valueField.SetInt(int64(d.Get(fieldName).(int)))
 		default:
-			log.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Field Value: %v,\t Tag Value: %s\n",
-				typeField.Name, typeField.Type,
+			fmt.Printf("[DEBUG] UNKNOWN Field Name: %s (%s),\t Field Value: %v,\t Tag Value: %s\n",
+				fieldName, typeField.Type,
 				valueField.Interface(), tag.Get("tag_name"))
 		}
 	}
@@ -313,9 +384,12 @@ func createDefaultCreateFunction(m models.Model) func(*schema.ResourceData, inte
 
 		answer, err := cc.session.GetModel(new.Prefix(), new.Key())
 		if err == nil {
-			// GREG: Should we update this object.
 			d.SetId(answer.Key())
-			return updateResourceData(answer, d)
+			ro, ok := answer.(models.Accessor)
+			if !ok || ro.IsReadOnly() {
+				return updateResourceData(answer, d)
+			}
+			return createDefaultUpdateFunction(m)(d, meta)
 		}
 
 		err = cc.session.CreateModel(new)
@@ -325,7 +399,7 @@ func createDefaultCreateFunction(m models.Model) func(*schema.ResourceData, inte
 
 		d.SetId(new.Key())
 
-		return updateResourceData(new, d)
+		return createDefaultReadFunction(m)(d, meta)
 	}
 }
 

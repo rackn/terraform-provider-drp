@@ -1,5 +1,5 @@
 hash: 3e5186e8b7b5da2b89790346056808ffa79815712ddf914829c72069276830ef
-updated: 2017-12-05T14:12:36.026914-06:00
+updated: 2017-12-13T23:40:07.017869-06:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: 2bd8b58cf4275aeb086ade613de226773e29e853
@@ -43,17 +43,41 @@ imports:
   version: a476722483882dd40b8111f0eb64e1d7f43f56e4
   subpackages:
   - spew
+- name: github.com/dgrijalva/jwt-go
+  version: a539ee1a749a2b895533f979515ac7e6e0f5b650
+- name: github.com/digitalrebar/pinger
+  version: 4b06d02345cad02a772ff21f13e1ef3551c943d4
 - name: github.com/digitalrebar/provision
-  version: 6f6bb1ea9ce85b62515c66b81db32b9ccf3e0afd
+  version: 8ed9e1a8a51f65013be437e17ec67ab8d2f53afa
   subpackages:
   - api
+  - backend
+  - backend/index
+  - embedded
+  - frontend
+  - midlayer
   - models
+  - server
 - name: github.com/digitalrebar/store
   version: f88fa4df9c617dc0bbd7b4361fd882dabbc44ad6
+- name: github.com/elazarl/go-bindata-assetfs
+  version: 30f82fa23fd844bd5bb1e5f216db87fd77b5eb43
 - name: github.com/elithrar/simple-scrypt
   version: 2325946f714c95de4a6088202c402fbdfa64163b
 - name: github.com/ghodss/yaml
   version: 0ca9ea5df5451ffdf184b4428c902747c2c11cd7
+- name: github.com/gin-contrib/cors
+  version: 88488351b0df049b2d3d65cab583c6bed894abb2
+- name: github.com/gin-contrib/location
+  version: 3e26b9c1187f298ae3669e41d1b696d256113f66
+- name: github.com/gin-contrib/sse
+  version: 22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae
+- name: github.com/gin-gonic/gin
+  version: 8902826696c1dad024e1c8ba4f903aa61a25c839
+  subpackages:
+  - binding
+  - json
+  - render
 - name: github.com/go-ini/ini
   version: c787282c39ac1fc618827141a1f762240def08a3
 - name: github.com/golang/protobuf
@@ -134,10 +158,14 @@ imports:
   version: d1caa6c97c9fc1cc9e83bbe34d0603f9ff0ce8bd
 - name: github.com/jmespath/go-jmespath
   version: bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d
+- name: github.com/json-iterator/go
+  version: 2dc0031b26575ddf5dab09ab7795105a05575473
 - name: github.com/krolaw/dhcp4
   version: 4de04cc59d6e4223583ec8117238e4d57e8b176d
   subpackages:
   - conn
+- name: github.com/mattn/go-isatty
+  version: fc9e8d8ef48496124e79ae0df75490096eccf6fe
 - name: github.com/mitchellh/copystructure
   version: d23ffcb85de31694d6ccaa23ccb4a03e55c1303f
 - name: github.com/mitchellh/go-homedir
@@ -152,8 +180,16 @@ imports:
   version: 63d60e9d0dbc60cf9164e6510889b0db6683d98c
 - name: github.com/pborman/uuid
   version: e790cca94e6cc75c7064b1332e63811d4aae1a53
+- name: github.com/pin/tftp
+  version: d715325c1fc1f1a22a8272a60dc6783a5ab093ba
+  subpackages:
+  - netascii
 - name: github.com/satori/go.uuid
   version: 5bf94b69c6b68ee1b541973bb8e1144db23a194b
+- name: github.com/ugorji/go
+  version: 8c0409fcbb70099c748d71f714529204975f6c3f
+  subpackages:
+  - codec
 - name: github.com/ulikunitz/xz
   version: 0c6b41e72360850ca4f98dc341fd999726ea007f
   subpackages:
@@ -164,6 +200,12 @@ imports:
   version: 728f2fee2a186b5764d9c9a8fa904279a22b1960
   subpackages:
   - utils
+- name: github.com/vishvananda/netlink
+  version: f67b75edbf5e3bb7dfe70bb788610693a71be3d1
+  subpackages:
+  - nl
+- name: github.com/vishvananda/netns
+  version: be1fbeda19366dea804f00efff2dd73a1642fdcc
 - name: github.com/xeipuuv/gojsonpointer
   version: 6fe8760cad3569743d51ddbb243b26f8456742dc
 - name: github.com/xeipuuv/gojsonreference
@@ -182,12 +224,15 @@ imports:
   - context
   - http2
   - http2/hpack
+  - icmp
   - idna
   - internal/iana
   - internal/socket
   - internal/timeseries
   - ipv4
+  - ipv6
   - lex/httplex
+  - route
   - trace
 - name: golang.org/x/sys
   version: 2d6f6f883a06fc0d5f4b14a81e4c28705ea64c15
@@ -225,6 +270,12 @@ imports:
   - status
   - tap
   - transport
+- name: gopkg.in/go-playground/validator.v8
+  version: 5f1438d3fca68893a817e4a66806cea46a9e4ebf
+- name: gopkg.in/olahol/melody.v1
+  version: d521390733761fe1db13de575c253afd5c743085
 - name: gopkg.in/yaml.v2
   version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
-testImports: []
+testImports:
+- name: github.com/jessevdk/go-flags
+  version: 6cf8f02b4ae8ba723ddc64dcfd403e530c06d927

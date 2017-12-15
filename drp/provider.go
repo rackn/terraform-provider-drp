@@ -54,6 +54,11 @@ func Provider() terraform.ResourceProvider {
 
 	for _, m := range models.All() {
 		pref := m.Prefix()
+		// These are generally read-only.  preferences is the one to come.
+		if pref == "preferences" || pref == "plugin_providers" ||
+			pref == "interfaces" || pref == "jobs" || pref == "leases" {
+			continue
+		}
 		spref := strings.TrimRight(pref, "s")
 		if _, ok := p.ResourcesMap[pref]; !ok {
 			p.ResourcesMap[fmt.Sprintf("drp_%s", spref)] = resourceGeneric(pref)
