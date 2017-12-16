@@ -33,6 +33,15 @@ func resourceMachine() *schema.Resource {
 		Optional: true,
 	}
 
+	// Define what profiles to add and remove at destroy
+	r.Schema["add_profiles"] = &schema.Schema{
+		Type:     schema.TypeList,
+		Optional: true,
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+	}
+
 	// Machines also have filters
 	r.Schema["filters"] = &schema.Schema{
 		Type:     schema.TypeList,
@@ -168,6 +177,26 @@ func updateMachine(cc *Config, machineObj *models.Machine, d *schema.ResourceDat
 		return nil, e
 	}
 	m := obj.(*models.Machine)
+
+	// Make sure the add profiles are on the machine
+	if ol, ok := d.GetOk("add_profiles"); ok {
+		l := ol.([]interface{})
+		for _, s := range l {
+			prof := s.(string)
+
+			found := false
+			for _, t := range m.Profiles {
+				if t == prof {
+					found = true
+					break
+				}
+			}
+
+			if !found {
+				m.Profiles = append(m.Profiles, prof)
+			}
+		}
+	}
 
 	cBootEnv := machineObj.BootEnv
 
@@ -311,6 +340,28 @@ func resourceMachineDelete(d *schema.ResourceData, meta interface{}) error {
 		} else {
 			newObj.BootEnv = "sledgehammer"
 		}
+	}
+
+	// Remove the profiles
+	if ol, ok := d.GetOk("add_profiles"); ok {
+		l := ol.([]interface{})
+		newList := []string{}
+
+		for _, ts := range newObj.Profiles {
+			found := false
+			for _, s := range l {
+				prof := s.(string)
+				if prof == ts {
+					found = true
+					break
+				}
+			}
+			if !found {
+				newList = append(newList, ts)
+			}
+		}
+
+		newObj.Profiles = newList
 	}
 
 	// Update the machine to request position

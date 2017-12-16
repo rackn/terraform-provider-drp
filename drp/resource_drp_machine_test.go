@@ -16,6 +16,7 @@ var testAccDrpMachine_basic = `
 		Stage = "local"
 		completion_stage = "local"
 		decommission_stage = "none"
+		add_profiles = [ "p-test" ]
 		Meta = {
                         "feature-flags" = "change-stage-v2"
 			"field1" = "value1"
@@ -31,6 +32,7 @@ func TestAccDrpMachine_basic(t *testing.T) {
 		Runnable: true,
 		BootEnv:  "local",
 		Stage:    "local",
+		Profiles: []string{"p-test"},
 		Params: map[string]interface{}{
 			"terraform/allocated": true,
 			"terraform/managed":   true,
@@ -58,10 +60,12 @@ func TestAccDrpMachine_basic(t *testing.T) {
 func testAccCreateResources() {
 	config := testAccDrpProvider.Meta().(*Config)
 
+	p := &models.Profile{Name: "p-test"}
 	ta := &models.Param{Name: "terraform/allocated", Schema: map[string]string{"type": "boolean"}}
 	tm := &models.Param{Name: "terraform/managed", Schema: map[string]string{"type": "boolean"}}
 	m := &models.Machine{Name: "mach1", Secret: "12", Params: map[string]interface{}{"terraform/allocated": false, "terraform/managed": true}, Uuid: uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7e")}
 
+	config.session.CreateModel(p)
 	config.session.CreateModel(ta)
 	config.session.CreateModel(tm)
 	config.session.CreateModel(m)
