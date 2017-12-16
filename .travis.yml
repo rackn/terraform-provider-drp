@@ -11,11 +11,20 @@ go:
 git:
   depth: 500
 install:
+# This script is used by the Travis build to install a cookie for
+# go.googlesource.com so rate limits are higher when using `go get` to fetch
+# packages that live there.
+# See: https://github.com/golang/go/issues/12933
+- bash scripts/gogetcookie.sh
+- go get github.com/kardianos/govendor
 - ./tools/build.sh
 - ./tools/package.sh
 - ./tools/publish.sh
 script:
-- ./tools/test.sh
+- make test
+- make testacc
+- make vendor-status
+- make vet
 after_success:
 - bash <(curl -s https://codecov.io/bash) -t 6259c706-5c1d-471f-b62b-4f908ea1801d
 notifications:
