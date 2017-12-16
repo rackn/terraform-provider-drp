@@ -1,9 +1,7 @@
 package drp
 
 import (
-	"encoding/json"
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/digitalrebar/provision/models"
@@ -46,9 +44,7 @@ var testAccDrpParam_change_1 = `
 		Name = "foo"
 		Description = "I am a param"
 		Documentation = "here I am"
-		Schema = {
-			"type" = "boolean"
-		}
+		Schema = "{\"type\":\"boolean\"}"
 	}`
 
 var testAccDrpParam_change_2 = `
@@ -56,15 +52,23 @@ var testAccDrpParam_change_2 = `
 		Name = "foo"
 		Description = "I am a param again"
 		Documentation = "here am I"
-		Schema = {
-			"type" = "int"
-		}
+		Schema = "{\"type\":\"integer\"}"
 	}`
 
 func TestAccDrpParam_change(t *testing.T) {
-	param1 := models.Param{Name: "foo", Description: "I am a param", Documentation: "here I am"}
+	param1 := models.Param{
+		Name:          "foo",
+		Description:   "I am a param",
+		Documentation: "here I am",
+		Schema:        map[string]string{"type": "boolean"},
+	}
 	param1.Fill()
-	param2 := models.Param{Name: "foo", Description: "I am a param again", Documentation: "here am I"}
+	param2 := models.Param{
+		Name:          "foo",
+		Description:   "I am a param again",
+		Documentation: "here am I",
+		Schema:        map[string]string{"type": "integer"},
+	}
 	param2.Fill()
 
 	resource.Test(t, resource.TestCase{
@@ -128,10 +132,8 @@ func testAccDrpCheckParamExists(t *testing.T, n string, param *models.Param) res
 			return fmt.Errorf("Param not found")
 		}
 
-		if !reflect.DeepEqual(param, found) {
-			b1, _ := json.MarshalIndent(param, "", "  ")
-			b2, _ := json.MarshalIndent(found, "", "  ")
-			return fmt.Errorf("Param doesn't match: e:%s\na:%s", string(b1), string(b2))
+		if err := diffObjects(param, found, "Param"); err != nil {
+			return err
 		}
 		return nil
 	}

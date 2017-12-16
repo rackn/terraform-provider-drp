@@ -1,9 +1,7 @@
 package drp
 
 import (
-	"encoding/json"
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/digitalrebar/provision/models"
@@ -167,10 +165,8 @@ func testAccDrpCheckStageExists(t *testing.T, n string, stage *models.Stage) res
 			return fmt.Errorf("Stage not found")
 		}
 
-		if !reflect.DeepEqual(stage, found) {
-			b1, _ := json.MarshalIndent(stage, "", "  ")
-			b2, _ := json.MarshalIndent(found, "", "  ")
-			return fmt.Errorf("Stage doesn't match: e:%s\na:%s", string(b1), string(b2))
+		if err := diffObjects(stage, found, "Stage"); err != nil {
+			return err
 		}
 		return nil
 	}

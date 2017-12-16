@@ -1,9 +1,7 @@
 package drp
 
 import (
-	"encoding/json"
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/digitalrebar/provision/models"
@@ -122,10 +120,8 @@ func testAccDrpCheckTemplateExists(t *testing.T, n string, template *models.Temp
 			return fmt.Errorf("Template not found")
 		}
 
-		if !reflect.DeepEqual(template, found) {
-			b1, _ := json.MarshalIndent(template, "", "  ")
-			b2, _ := json.MarshalIndent(found, "", "  ")
-			return fmt.Errorf("Template doesn't match: e:%s\na:%s", string(b1), string(b2))
+		if err := diffObjects(template, found, "Template"); err != nil {
+			return err
 		}
 		return nil
 	}

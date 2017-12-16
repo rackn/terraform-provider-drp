@@ -1,5 +1,5 @@
 hash: 3e5186e8b7b5da2b89790346056808ffa79815712ddf914829c72069276830ef
-updated: 2017-12-13T23:40:07.017869-06:00
+updated: 2017-12-15T16:44:11.156225-06:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: 2bd8b58cf4275aeb086ade613de226773e29e853
@@ -53,15 +53,12 @@ imports:
   - api
   - backend
   - backend/index
-  - embedded
   - frontend
   - midlayer
   - models
   - server
 - name: github.com/digitalrebar/store
   version: f88fa4df9c617dc0bbd7b4361fd882dabbc44ad6
-- name: github.com/elazarl/go-bindata-assetfs
-  version: 30f82fa23fd844bd5bb1e5f216db87fd77b5eb43
 - name: github.com/elithrar/simple-scrypt
   version: 2325946f714c95de4a6088202c402fbdfa64163b
 - name: github.com/ghodss/yaml
@@ -277,5 +274,7 @@ imports:
 - name: gopkg.in/yaml.v2
   version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
 testImports:
+- name: github.com/go-test/deep
+  version: 9898238679c264cfb10411539f14a0553dc8b295
 - name: github.com/jessevdk/go-flags
   version: 6cf8f02b4ae8ba723ddc64dcfd403e530c06d927

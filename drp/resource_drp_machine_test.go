@@ -1,104 +1,41 @@
 package drp
 
 import (
-	"encoding/json"
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/digitalrebar/provision/models"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/pborman/uuid"
 )
 
 var testAccDrpMachine_basic = `
 	resource "drp_machine" "foo" {
+		Name = "mach1"
+		Stage = "local"
+		completion_stage = "local"
+		decommission_stage = "none"
 		Meta = {
+                        "feature-flags" = "change-stage-v2"
 			"field1" = "value1"
 			"field2" = "value2"
 		}
 	}`
 
 func TestAccDrpMachine_basic(t *testing.T) {
-	machine := models.Machine{Name: "mach1",
-		Meta: map[string]string{"field1": "value1", "field2": "value2"},
-	}
-	machine.Fill()
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccDrpPreCheck(t) },
-		Providers:    testAccDrpProviders,
-		CheckDestroy: testAccDrpCheckMachineDestroy,
-		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: testAccDrpMachine_basic,
-				Check: resource.ComposeTestCheckFunc(
-					testAccDrpCheckMachineExists(t, "drp_machine.foo", &machine),
-				),
-			},
-		},
-	})
-}
-
-var testAccDrpMachine_change_1 = `
-	resource "drp_machine" "foo" {
-		Name = "foo"
-		Description = "I am a machine"
-	}`
-
-var testAccDrpMachine_change_2 = `
-	resource "drp_machine" "foo" {
-		Name = "foo"
-		Description = "I am a machine again"
-	}`
-
-func TestAccDrpMachine_change(t *testing.T) {
-	machine1 := models.Machine{Name: "foo", Description: "I am a machine"}
-	machine1.Fill()
-	machine2 := models.Machine{Name: "foo", Description: "I am a machine again"}
-	machine2.Fill()
-
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccDrpPreCheck(t) },
-		Providers:    testAccDrpProviders,
-		CheckDestroy: testAccDrpCheckMachineDestroy,
-		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: testAccDrpMachine_change_1,
-				Check: resource.ComposeTestCheckFunc(
-					testAccDrpCheckMachineExists(t, "drp_machine.foo", &machine1),
-				),
-			},
-			resource.TestStep{
-				Config: testAccDrpMachine_change_2,
-				Check: resource.ComposeTestCheckFunc(
-					testAccDrpCheckMachineExists(t, "drp_machine.foo", &machine2),
-				),
-			},
-		},
-	})
-}
-
-var testAccDrpMachine_withParams = `
-	resource "drp_machine" "foo" {
-		Name = "foo"
-		Description = "I am a machine again"
-		Params = {
-			"test/string" = "fred"
-			"test/int" = 3
-			"test/bool" = true
-			"test/list" = [ "one", "two" ]
-		}
-	}`
-
-func TestAccDrpMachine_withParams(t *testing.T) {
-	machine := models.Machine{Name: "foo", Description: "I am a machine",
+	machine := models.Machine{
+		Name:     "mach1",
+		Uuid:     uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7e"),
+		Secret:   "12",
+		Runnable: true,
+		BootEnv:  "local",
+		Stage:    "local",
 		Params: map[string]interface{}{
-			"test/string": "fred",
-			"test/int":    3,
-			"test/bool":   true,
-			"test/list":   []string{"one", "two"},
+			"terraform/allocated": true,
+			"terraform/managed":   true,
 		},
+		Meta: map[string]string{"feature-flags": "change-stage-v2", "field1": "value1", "field2": "value2"},
 	}
 	machine.Fill()
 
@@ -108,13 +45,26 @@ func TestAccDrpMachine_withParams(t *testing.T) {
 		CheckDestroy: testAccDrpCheckMachineDestroy,
 		Steps: []resource.TestStep{
 			resource.TestStep{
-				Config: testAccDrpMachine_withParams,
+				PreConfig: testAccCreateResources,
+				Config:    testAccDrpMachine_basic,
 				Check: resource.ComposeTestCheckFunc(
 					testAccDrpCheckMachineExists(t, "drp_machine.foo", &machine),
 				),
 			},
 		},
 	})
+}
+
+func testAccCreateResources() {
+	config := testAccDrpProvider.Meta().(*Config)
+
+	ta := &models.Param{Name: "terraform/allocated", Schema: map[string]string{"type": "boolean"}}
+	tm := &models.Param{Name: "terraform/managed", Schema: map[string]string{"type": "boolean"}}
+	m := &models.Machine{Name: "mach1", Secret: "12", Params: map[string]interface{}{"terraform/allocated": false, "terraform/managed": true}, Uuid: uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7e")}
+
+	config.session.CreateModel(ta)
+	config.session.CreateModel(tm)
+	config.session.CreateModel(m)
 }
 
 func testAccDrpCheckMachineDestroy(s *terraform.State) error {
@@ -125,8 +75,8 @@ func testAccDrpCheckMachineDestroy(s *terraform.State) error {
 			continue
 		}
 
-		if _, err := config.session.GetModel("machines", rs.Primary.ID); err == nil {
-			return fmt.Errorf("Machine still exists")
+		if _, err := config.session.GetModel("machines", rs.Primary.ID); err != nil {
+			return fmt.Errorf("Machine does not exist")
 		}
 	}
 
@@ -153,14 +103,12 @@ func testAccDrpCheckMachineExists(t *testing.T, n string, machine *models.Machin
 		found := obj.(*models.Machine)
 		found.ClearValidation()
 
-		if found.Name != rs.Primary.ID {
+		if found.Key() != rs.Primary.ID {
 			return fmt.Errorf("Machine not found")
 		}
 
-		if !reflect.DeepEqual(machine, found) {
-			b1, _ := json.MarshalIndent(machine, "", "  ")
-			b2, _ := json.MarshalIndent(found, "", "  ")
-			return fmt.Errorf("Machine doesn't match: e:%s\na:%s", string(b1), string(b2))
+		if err := diffObjects(machine, found, "Machine"); err != nil {
+			return err
 		}
 		return nil
 	}

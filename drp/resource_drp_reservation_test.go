@@ -1,10 +1,8 @@
 package drp
 
 import (
-	"encoding/json"
 	"fmt"
 	"net"
-	"reflect"
 	"testing"
 
 	"github.com/digitalrebar/provision/models"
@@ -157,10 +155,8 @@ func testAccDrpCheckReservationExists(t *testing.T, n string, reservation *model
 			return fmt.Errorf("Reservation not found: %s %s", found.Key(), rs.Primary.ID)
 		}
 
-		if !reflect.DeepEqual(reservation, found) {
-			b1, _ := json.MarshalIndent(reservation, "", "  ")
-			b2, _ := json.MarshalIndent(found, "", "  ")
-			return fmt.Errorf("Reservation doesn't match: e:%s\na:%s", string(b1), string(b2))
+		if err := diffObjects(reservation, found, "Reservation"); err != nil {
+			return err
 		}
 		return nil
 	}

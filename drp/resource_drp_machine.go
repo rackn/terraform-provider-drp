@@ -21,6 +21,18 @@ func resourceMachine() *schema.Resource {
 	r.Update = resourceMachineUpdate
 	r.Delete = resourceMachineDelete
 
+	// Define what the machines completion stage.
+	r.Schema["completion_stage"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
+	// Define what the machines decommision stage
+	r.Schema["decommission_stage"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
 	// Machines also have filters
 	r.Schema["filters"] = &schema.Schema{
 		Type:     schema.TypeList,
@@ -99,7 +111,7 @@ func releaseMachine(cc *Config, uuid string, tfManaged bool) error {
 	}
 }
 
-func getMachineStatus(cc *Config, uuid string) resource.StateRefreshFunc {
+func getMachineStatus(cc *Config, uuid string, stages []string) resource.StateRefreshFunc {
 	log.Printf("[DEBUG] [getMachineStatus] Getting status of machine: %s", uuid)
 	return func() (interface{}, string, error) {
 		mo, err := cc.session.GetModel("machines", uuid)
@@ -109,9 +121,17 @@ func getMachineStatus(cc *Config, uuid string) resource.StateRefreshFunc {
 		}
 		machineObject := mo.(*models.Machine)
 
+		// 6 == done  9 == pending
 		machineStatus := "6"
 		if machineObject.Stage != "" {
-			if machineObject.Stage != "complete" && machineObject.Stage != "complete-nowait" {
+			found := false
+			for _, s := range stages {
+				if s == machineObject.Stage {
+					found = true
+					break
+				}
+			}
+			if !found {
 				machineStatus = "9"
 			}
 		} else {
@@ -159,14 +179,12 @@ func updateMachine(cc *Config, machineObj *models.Machine, d *schema.ResourceDat
 	machineObj = m
 
 	if err := machineDo(cc, machineObj.UUID(), "nextbootpxe"); err != nil {
-		log.Printf("[ERROR] [updateMachine] Unable to mark the machine for pxe next boot: %s\n", machineObj.UUID())
-		return nil, err
+		log.Printf("[WARN] [updateMachine] Unable to mark the machine for pxe next boot: %s\n", machineObj.UUID())
 	}
 
 	// Power on and then cycle, if needed
 	if err := machineDo(cc, machineObj.UUID(), "poweron"); err != nil {
-		log.Printf("[ERROR] [updateMachine] Unable to power on machine: %s\n", machineObj.UUID())
-		return nil, err
+		log.Printf("[WARN] [updateMachine] Unable to power on machine: %s\n", machineObj.UUID())
 	}
 
 	obj, err = cc.session.GetModel(machineObj.Prefix(), machineObj.Key())
@@ -178,8 +196,7 @@ func updateMachine(cc *Config, machineObj *models.Machine, d *schema.ResourceDat
 
 	if machineObj.BootEnv != cBootEnv {
 		if err := machineDo(cc, machineObj.Key(), "powercycle"); err != nil {
-			log.Printf("[ERROR] [updateMachine] Unable to power cycleup machine: %s\n", machineObj.UUID())
-			return nil, err
+			log.Printf("[WARN] [updateMachine] Unable to power cycleup machine: %s\n", machineObj.UUID())
 		}
 	}
 
@@ -219,10 +236,16 @@ func resourceMachineCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[DEBUG] [resourceMachineCreate] Waiting for machine (%s) to become active\n", machineObj.UUID())
+
+	stages := []string{"complete", "complete-nowait"}
+	if ns, ok := d.GetOk("completion_stage"); ok {
+		stages = []string{ns.(string)}
+	}
+
 	stateConf := &resource.StateChangeConf{
 		Pending:    []string{"9:"},
 		Target:     []string{"6:"},
-		Refresh:    getMachineStatus(cc, machineObj.UUID()),
+		Refresh:    getMachineStatus(cc, machineObj.UUID(), stages),
 		Timeout:    25 * time.Minute,
 		Delay:      10 * time.Second,
 		MinTimeout: 3 * time.Second,
@@ -280,10 +303,14 @@ func resourceMachineDelete(d *schema.ResourceData, meta interface{}) error {
 	machineObj := obj.(*models.Machine)
 	newObj := models.Clone(machineObj).(*models.Machine)
 
-	if machineObj.Stage != "" {
-		newObj.Stage = "discover"
+	if ns, ok := d.GetOk("decommission_stage"); ok {
+		newObj.Stage = ns.(string)
 	} else {
-		newObj.BootEnv = "sledgehammer"
+		if machineObj.Stage != "" {
+			newObj.Stage = "discover"
+		} else {
+			newObj.BootEnv = "sledgehammer"
+		}
 	}
 
 	// Update the machine to request position

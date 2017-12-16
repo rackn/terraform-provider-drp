@@ -1,10 +1,8 @@
 package drp
 
 import (
-	"encoding/json"
 	"fmt"
 	"net"
-	"reflect"
 	"testing"
 
 	"github.com/digitalrebar/provision/models"
@@ -15,8 +13,8 @@ import (
 
 var testAccDrpRawMachine_basic = `
 	resource "drp_raw_machine" "foo" {
-		Name = "mach1"
-		Uuid = "3945838b-be8c-4b35-8b1c-b538ddc71f7e"
+		Name = "mach11"
+		Uuid = "3945838b-be8c-4b35-8b1c-b538ddc71f7c"
 		Secret = "12"
 		Meta = {
 			"field1" = "value1"
@@ -26,8 +24,8 @@ var testAccDrpRawMachine_basic = `
 	}`
 
 func TestAccDrpRawMachine_basic(t *testing.T) {
-	raw_machine := models.Machine{Name: "mach1",
-		Uuid:     uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7e"),
+	raw_machine := models.Machine{Name: "mach11",
+		Uuid:     uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7c"),
 		Secret:   "12",
 		Stage:    "none",
 		BootEnv:  "local",
@@ -66,8 +64,8 @@ var testAccDrpRawMachine_change_1 = `
 	}
 	resource "drp_raw_machine" "foo" {
 		depends_on = ["drp_profile.p1", "drp_profile.p2", "drp_task.t1", "drp_task.t2"]
-		Name = "mach1"
-		Uuid = "3945838b-be8c-4b35-8b1c-b538ddc71f7e"
+		Name = "mach11"
+		Uuid = "3945838b-be8c-4b35-8b1c-b538ddc71f7c"
 		Secret = "12"
 		Description = "I am a raw_machine"
 		CurrentJob = "3945838b-be8c-4b35-8b1c-b538ddc71f7f"
@@ -107,8 +105,8 @@ var testAccDrpRawMachine_change_2 = `
 	}
 	resource "drp_raw_machine" "foo" {
 		depends_on = ["drp_profile.p3", "drp_profile.p4", "drp_task.t3", "drp_task.t4", "drp_profile.p1", "drp_profile.p2", "drp_task.t1", "drp_task.t2"]
-		Name = "mach1"
-		Uuid = "3945838b-be8c-4b35-8b1c-b538ddc71f7e"
+		Name = "mach11"
+		Uuid = "3945838b-be8c-4b35-8b1c-b538ddc71f7c"
 		Secret = "12"
 		Description = "I am a raw_machine again"
 		CurrentJob = "3945838b-be8c-4b35-8b1c-b538ddc71f7a"
@@ -123,10 +121,10 @@ var testAccDrpRawMachine_change_2 = `
 
 func TestAccDrpRawMachine_change(t *testing.T) {
 	raw_machine1 := models.Machine{
-		Name:        "mach1",
+		Name:        "mach11",
 		Address:     net.ParseIP("1.1.1.1"),
 		Description: "I am a raw_machine",
-		Uuid:        uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7e"),
+		Uuid:        uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7c"),
 		CurrentJob:  uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7f"),
 		CurrentTask: -1,
 		Secret:      "12",
@@ -140,10 +138,10 @@ func TestAccDrpRawMachine_change(t *testing.T) {
 	}
 	raw_machine1.Fill()
 	raw_machine2 := models.Machine{
-		Name:        "mach1",
+		Name:        "mach11",
 		Address:     net.ParseIP("1.1.1.2"),
 		Description: "I am a raw_machine again",
-		Uuid:        uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7e"),
+		Uuid:        uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7c"),
 		CurrentJob:  uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7a"),
 		CurrentTask: -1,
 		Secret:      "12",
@@ -180,21 +178,21 @@ func TestAccDrpRawMachine_change(t *testing.T) {
 
 var testAccDrpRawMachine_withParams = `
 	resource "drp_raw_machine" "foo" {
-		Name = "mach1"
-		Uuid = "3945838b-be8c-4b35-8b1c-b538ddc71f7e"
+		Name = "mach11"
+		Uuid = "3945838b-be8c-4b35-8b1c-b538ddc71f7c"
 		Secret = "12"
 		Params = {
-			"test/string" = "fred"
-			"test/int" = 3
-			"test/bool" = true
-			"test/list" = [ "one", "two" ]
+			"test/string" = "\"fred\""
+			"test/int" = "3"
+			"test/bool" = "true"
+			"test/list" = "[\"one\",\"two\"]"
 		}
 	}`
 
 func TestAccDrpRawMachine_withParams(t *testing.T) {
 	raw_machine := models.Machine{
-		Name:     "mach1",
-		Uuid:     uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7e"),
+		Name:     "mach11",
+		Uuid:     uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7c"),
 		Secret:   "12",
 		Stage:    "none",
 		BootEnv:  "local",
@@ -264,10 +262,8 @@ func testAccDrpCheckRawMachineExists(t *testing.T, n string, raw_machine *models
 			return fmt.Errorf("RawMachine not found")
 		}
 
-		if !reflect.DeepEqual(raw_machine, found) {
-			b1, _ := json.MarshalIndent(raw_machine, "", "  ")
-			b2, _ := json.MarshalIndent(found, "", "  ")
-			return fmt.Errorf("RawMachine doesn't match: e:%s\na:%s", string(b1), string(b2))
+		if err := diffObjects(raw_machine, found, "RawMachine"); err != nil {
+			return err
 		}
 		return nil
 	}

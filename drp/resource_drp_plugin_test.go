@@ -1,9 +1,7 @@
 package drp
 
 import (
-	"encoding/json"
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/digitalrebar/provision/models"
@@ -89,10 +87,10 @@ var testAccDrpPlugin_withParams = `
 		Name = "foo"
 		PluginProvider = "ipmi"
 		Params = {
-			"test/string" = "fred"
+			"test/string" = "\"fred\""
 			"test/int" = 3
-			"test/bool" = true
-			"test/list" = [ "one", "two" ]
+			"test/bool" = "true"
+			"test/list" = "[\"one\",\"two\"]"
 		}
 	}`
 
@@ -162,10 +160,8 @@ func testAccDrpCheckPluginExists(t *testing.T, n string, plugin *models.Plugin) 
 			return fmt.Errorf("Plugin not found")
 		}
 
-		if !reflect.DeepEqual(plugin, found) {
-			b1, _ := json.MarshalIndent(plugin, "", "  ")
-			b2, _ := json.MarshalIndent(found, "", "  ")
-			return fmt.Errorf("Plugin doesn't match: e:%s\na:%s", string(b1), string(b2))
+		if err := diffObjects(plugin, found, "Plugin"); err != nil {
+			return err
 		}
 		return nil
 	}

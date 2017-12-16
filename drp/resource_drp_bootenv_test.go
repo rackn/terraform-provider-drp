@@ -1,9 +1,7 @@
 package drp
 
 import (
-	"encoding/json"
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/digitalrebar/provision/models"
@@ -168,10 +166,8 @@ func testAccDrpCheckBootEnvExists(t *testing.T, n string, bootenv *models.BootEn
 			return fmt.Errorf("BootEnv not found")
 		}
 
-		if !reflect.DeepEqual(bootenv, found) {
-			b1, _ := json.MarshalIndent(bootenv, "", "  ")
-			b2, _ := json.MarshalIndent(found, "", "  ")
-			return fmt.Errorf("BootEnv doesn't match: e:%s\na:%s", string(b1), string(b2))
+		if err := diffObjects(bootenv, found, "BootEnv"); err != nil {
+			return err
 		}
 		return nil
 	}

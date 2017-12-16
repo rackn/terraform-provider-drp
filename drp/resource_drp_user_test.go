@@ -1,9 +1,7 @@
 package drp
 
 import (
-	"encoding/json"
 	"fmt"
-	"reflect"
 	"testing"
 
 	"github.com/digitalrebar/provision/models"
@@ -129,10 +127,8 @@ func testAccDrpCheckUserExists(t *testing.T, n string, user *models.User) resour
 			}
 		}
 
-		if !reflect.DeepEqual(user, found) {
-			b1, _ := json.MarshalIndent(user, "", "  ")
-			b2, _ := json.MarshalIndent(found, "", "  ")
-			return fmt.Errorf("User doesn't match: e:%s\na:%s", string(b1), string(b2))
+		if err := diffObjects(user, found, "User"); err != nil {
+			return err
 		}
 		return nil
 	}

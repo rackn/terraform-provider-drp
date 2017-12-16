@@ -1,6 +1,7 @@
 package drp
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/VictorLowther/jsonpatch2/utils"
 	"github.com/digitalrebar/provision/models"
+	"github.com/go-test/deep"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pborman/uuid"
 )
@@ -77,11 +79,22 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 		// Will try some things.
 		//
 		if fieldName == "Params" {
-			// GREG: FIGURE THIS OUT!!!
+			sm["Params"] = &schema.Schema{
+				Type: schema.TypeMap,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Optional: true,
+				Computed: true,
+			}
 			continue
 		}
 		if fieldName == "Schema" {
-			// GREG: FIGURE THIS OUT!!!
+			sm["Schema"] = &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+			}
 			continue
 		}
 
@@ -205,13 +218,25 @@ func updateResourceData(m models.Model, d *schema.ResourceData) error {
 		// Will try some things.
 		//
 		if fieldName == "Params" {
-			// GREG: FIGURE THIS OUT!!!
-			fmt.Printf("[DEBUG] Params not support for push into terraform\n")
+			answer := map[string]string{}
+
+			drpAnswer := valueField.Interface().(map[string]interface{})
+			for k, v := range drpAnswer {
+				b, e := json.Marshal(v)
+				if e != nil {
+					return e
+				}
+				answer[k] = string(b)
+			}
+			d.Set("Params", answer)
 			continue
 		}
 		if fieldName == "Schema" {
-			// GREG: FIGURE THIS OUT!!!
-			fmt.Printf("[DEBUG] Schema not support for push into terraform\n")
+			b, e := json.Marshal(valueField.Interface())
+			if e != nil {
+				return e
+			}
+			d.Set("Schema", string(b))
 			continue
 		}
 
@@ -295,12 +320,29 @@ func buildModel(m models.Model, d *schema.ResourceData) (models.Model, error) {
 		// Will try some things.
 		//
 		if fieldName == "Params" {
-			fmt.Printf("[DEBUG] Params not support for push to DRP\n")
+			answer := d.Get("Params").(map[string]interface{})
+
+			valueField.Set(reflect.MakeMap(typeField.Type))
+
+			for k, v := range answer {
+				s := v.(string)
+
+				var i interface{}
+				if e := json.Unmarshal([]byte(s), &i); e != nil {
+					return nil, e
+				}
+
+				valueField.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(i))
+			}
 			continue
 		}
 		if fieldName == "Schema" {
-			// GREG: FIGURE THIS OUT!!!
-			fmt.Printf("[DEBUG] Schema not support for push to DRP\n")
+			s := d.Get("Schema").(string)
+			var i interface{}
+			if e := json.Unmarshal([]byte(s), &i); e != nil {
+				return nil, e
+			}
+			valueField.Set(reflect.ValueOf(i))
 			continue
 		}
 
@@ -432,11 +474,11 @@ func createDefaultUpdateFunction(m models.Model) func(*schema.ResourceData, inte
 			return err
 		}
 
-		answer, err := cc.session.PatchTo(base, mods)
+		err = cc.session.Req().PatchTo(base, mods).Params("force", "true").Do(&mods)
 		if err != nil {
 			return err
 		}
-		return updateResourceData(answer, d)
+		return updateResourceData(mods, d)
 	}
 }
 
@@ -455,4 +497,17 @@ func createDefaultExistsFunction(m models.Model) func(*schema.ResourceData, inte
 		log.Printf("[DEBUG] [resource%sExists] testing %s\n", m.Prefix(), d.Id())
 		return cc.session.ExistsModel(m.Prefix(), d.Id())
 	}
+}
+
+func diffObjects(exp, fnd interface{}, t string) error {
+	b1, _ := json.MarshalIndent(exp, "", "  ")
+	b2, _ := json.MarshalIndent(fnd, "", "  ")
+	if string(b1) != string(b2) {
+		return fmt.Errorf("json diff: %s: %v\n%v\n", t, string(b1), string(b2))
+
+	}
+	if diff := deep.Equal(exp, fnd); diff != nil {
+		return fmt.Errorf("%s doesn't match: %v", t, diff)
+	}
+	return nil
 }

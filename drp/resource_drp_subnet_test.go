@@ -1,10 +1,8 @@
 package drp
 
 import (
-	"encoding/json"
 	"fmt"
 	"net"
-	"reflect"
 	"testing"
 
 	"github.com/digitalrebar/provision/models"
@@ -201,10 +199,8 @@ func testAccDrpCheckSubnetExists(t *testing.T, n string, subnet *models.Subnet) 
 			return fmt.Errorf("Subnet not found")
 		}
 
-		if !reflect.DeepEqual(subnet, found) {
-			b1, _ := json.MarshalIndent(subnet, "", "  ")
-			b2, _ := json.MarshalIndent(found, "", "  ")
-			return fmt.Errorf("Subnet doesn't match: e:%s\na:%s", string(b1), string(b2))
+		if err := diffObjects(subnet, found, "Subnet"); err != nil {
+			return err
 		}
 		return nil
 	}
