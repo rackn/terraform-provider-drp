@@ -341,6 +341,8 @@ func resourceMachineDelete(d *schema.ResourceData, meta interface{}) error {
 			newObj.BootEnv = "sledgehammer"
 		}
 	}
+	// Since we are rebooting, set not runnable.
+	newObj.Runnable = false
 
 	// Remove the profiles
 	if ol, ok := d.GetOk("add_profiles"); ok {
