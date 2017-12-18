@@ -1,2 +1,5 @@
 vendor
+bin
+terraform-provider-drp.zip
+terraform-provider-drp.sha256
 .terraform
