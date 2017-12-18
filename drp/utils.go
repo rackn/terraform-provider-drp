@@ -226,7 +226,11 @@ func updateResourceData(m models.Model, d *schema.ResourceData) error {
 				if e != nil {
 					return e
 				}
-				answer[k] = string(b)
+				if s, ok := v.(string); ok {
+					answer[k] = s
+				} else {
+					answer[k] = string(b)
+				}
 			}
 			d.Set("Params", answer)
 			continue
@@ -329,7 +333,7 @@ func buildModel(m models.Model, d *schema.ResourceData) (models.Model, error) {
 
 				var i interface{}
 				if e := json.Unmarshal([]byte(s), &i); e != nil {
-					return nil, e
+					i = s
 				}
 
 				valueField.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(i))
