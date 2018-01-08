@@ -1,11 +1,5 @@
-drp
 vendor
 bin
-.terraform
-._Version.meta
-terraform-provider-drp
-terraform-provider-drp.sha256
 terraform-provider-drp.zip
-terraform.sha256
-terraform.yaml
-terraform.json
+terraform-provider-drp.sha256
+.terraform
