@@ -21,8 +21,9 @@ var testAccDrpPlugin_basic = `
 
 func TestAccDrpPlugin_basic(t *testing.T) {
 	plugin := models.Plugin{Name: "foo",
-		Provider: "ipmi",
-		Meta:     map[string]string{"field1": "value1", "field2": "value2"},
+		Provider:     "ipmi",
+		Meta:         map[string]string{"field1": "value1", "field2": "value2"},
+		PluginErrors: []string{"Missing Plugin Provider: ipmi"},
 	}
 	plugin.Fill()
 
@@ -56,9 +57,19 @@ var testAccDrpPlugin_change_2 = `
 	}`
 
 func TestAccDrpPlugin_change(t *testing.T) {
-	plugin1 := models.Plugin{Name: "foo", Description: "I am a plugin", Provider: "ipmi"}
+	plugin1 := models.Plugin{
+		Name:         "foo",
+		Description:  "I am a plugin",
+		Provider:     "ipmi",
+		PluginErrors: []string{"Missing Plugin Provider: ipmi"},
+	}
 	plugin1.Fill()
-	plugin2 := models.Plugin{Name: "foo", Description: "I am a plugin again", Provider: "ipmi"}
+	plugin2 := models.Plugin{
+		Name:         "foo",
+		Description:  "I am a plugin again",
+		Provider:     "ipmi",
+		PluginErrors: []string{"Missing Plugin Provider: ipmi"},
+	}
 	plugin2.Fill()
 
 	resource.Test(t, resource.TestCase{
@@ -102,6 +113,7 @@ func TestAccDrpPlugin_withParams(t *testing.T) {
 			"test/bool":   true,
 			"test/list":   []string{"one", "two"},
 		},
+		PluginErrors: []string{"Missing Plugin Provider: ipmi"},
 	}
 	plugin.Fill()
 

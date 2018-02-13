@@ -48,6 +48,9 @@ func Provider() terraform.ResourceProvider {
 		ResourcesMap: map[string]*schema.Resource{
 			"drp_machine": resourceMachine(),
 		},
+		DataSourcesMap: map[string]*schema.Resource{
+			"drp_machine": dataSourceMachine(),
+		},
 
 		ConfigureFunc: providerConfigure,
 	}
@@ -66,6 +69,7 @@ func Provider() terraform.ResourceProvider {
 			spref = "raw_machine"
 		}
 		p.ResourcesMap[fmt.Sprintf("drp_%s", spref)] = resourceGeneric(pref)
+		p.DataSourcesMap[fmt.Sprintf("drp_%s", spref)] = dataSourceGeneric(pref)
 	}
 
 	return p

@@ -36,9 +36,9 @@ func TestAccDrpSubnet_basic(t *testing.T) {
 		Strategy:          "MAC",
 		Meta:              map[string]string{"field1": "value1", "field2": "value2"},
 		Pickers:           []string{"hint", "nextFree", "mostExpired"},
-		Options: []*models.DhcpOption{
-			&models.DhcpOption{Code: 1, Value: "255.255.255.0"},
-			&models.DhcpOption{Code: 28, Value: "1.1.1.255"},
+		Options: []models.DhcpOption{
+			models.DhcpOption{Code: 1, Value: "255.255.255.0"},
+			models.DhcpOption{Code: 28, Value: "1.1.1.255"},
 		},
 	}
 
@@ -112,11 +112,11 @@ func TestAccDrpSubnet_change(t *testing.T) {
 		ActiveEnd:         net.ParseIP("1.1.1.9"),
 		Strategy:          "MAC",
 		Pickers:           []string{"none"},
-		Options: []*models.DhcpOption{
-			&models.DhcpOption{Code: 30, Value: "fred"},
-			&models.DhcpOption{Code: 3, Value: "1.1.1.1"},
-			&models.DhcpOption{Code: 1, Value: "255.255.255.0"},
-			&models.DhcpOption{Code: 28, Value: "1.1.1.255"},
+		Options: []models.DhcpOption{
+			models.DhcpOption{Code: 30, Value: "fred"},
+			models.DhcpOption{Code: 3, Value: "1.1.1.1"},
+			models.DhcpOption{Code: 1, Value: "255.255.255.0"},
+			models.DhcpOption{Code: 28, Value: "1.1.1.255"},
 		},
 	}
 	subnet1.Fill()
@@ -129,11 +129,11 @@ func TestAccDrpSubnet_change(t *testing.T) {
 		ActiveEnd:         net.ParseIP("1.1.1.10"),
 		Strategy:          "MAC",
 		Pickers:           []string{"hint", "none"},
-		Options: []*models.DhcpOption{
-			&models.DhcpOption{Code: 33, Value: "fred"},
-			&models.DhcpOption{Code: 4, Value: "1.2.1.1"},
-			&models.DhcpOption{Code: 1, Value: "255.255.255.0"},
-			&models.DhcpOption{Code: 28, Value: "1.1.1.255"},
+		Options: []models.DhcpOption{
+			models.DhcpOption{Code: 33, Value: "fred"},
+			models.DhcpOption{Code: 4, Value: "1.2.1.1"},
+			models.DhcpOption{Code: 1, Value: "255.255.255.0"},
+			models.DhcpOption{Code: 28, Value: "1.1.1.255"},
 		},
 	}
 	subnet2.Fill()

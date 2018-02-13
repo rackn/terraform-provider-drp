@@ -13,7 +13,7 @@ var testAccDrpTask_basic = `
 	resource "drp_task" "foo" {
 		Name = "foo"
 		Meta = {
-			"feature-flags" = "original-exit-codes"
+			"feature-flags" = "sane-exit-codes"
 			"field1" = "value1"
 			"field2" = "value2"
 		}
@@ -21,7 +21,7 @@ var testAccDrpTask_basic = `
 
 func TestAccDrpTask_basic(t *testing.T) {
 	task := models.Task{Name: "foo",
-		Meta: map[string]string{"field1": "value1", "field2": "value2", "feature-flags": "original-exit-codes"},
+		Meta: map[string]string{"field1": "value1", "field2": "value2", "feature-flags": "sane-exit-codes"},
 	}
 	task.Fill()
 
@@ -71,7 +71,7 @@ func TestAccDrpTask_change(t *testing.T) {
 		Name:           "foo",
 		Description:    "I am a task",
 		Documentation:  "I am docs",
-		Meta:           map[string]string{"feature-flags": "original-exit-codes"},
+		Meta:           map[string]string{"feature-flags": "sane-exit-codes"},
 		RequiredParams: []string{"p1", "p2"},
 		OptionalParams: []string{"p3", "p4"},
 		Templates: []models.TemplateInfo{
@@ -84,7 +84,7 @@ func TestAccDrpTask_change(t *testing.T) {
 		Name:           "foo",
 		Description:    "I am a task again",
 		Documentation:  "I am docs more so",
-		Meta:           map[string]string{"feature-flags": "original-exit-codes"},
+		Meta:           map[string]string{"feature-flags": "sane-exit-codes"},
 		RequiredParams: []string{"p3", "p4"},
 		OptionalParams: []string{"p1", "p2"},
 		Templates: []models.TemplateInfo{

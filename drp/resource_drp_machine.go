@@ -11,11 +11,43 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+func dataSourceMachine() *schema.Resource {
+	log.Println("[DEBUG] [dataSourceMachine] Initializing data structure")
+
+	m, _ := models.New("machine")
+	r := buildSchema(m, false)
+	r.Create = nil
+	r.Update = nil
+	r.Delete = nil
+	r.Importer = nil
+	r.Exists = nil
+
+	// Machines also have filters
+	r.Schema["filters"] = &schema.Schema{
+		Type:     schema.TypeList,
+		Optional: true,
+		ForceNew: true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"name": {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+				"jsonvalue": {
+					Type:     schema.TypeString,
+					Optional: true,
+				},
+			},
+		},
+	}
+	return r
+}
+
 func resourceMachine() *schema.Resource {
 	log.Println("[DEBUG] [resourceMachine] Initializing data structure")
 
 	m, _ := models.New("machine")
-	r := buildSchema(m)
+	r := buildSchema(m, true)
 
 	r.Create = resourceMachineCreate
 	r.Update = resourceMachineUpdate
