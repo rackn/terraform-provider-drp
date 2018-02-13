@@ -16,19 +16,19 @@ import (
 	"github.com/pborman/uuid"
 )
 
-func buildSchemaListFromObject(m interface{}) *schema.Schema {
+func buildSchemaListFromObject(m interface{}, computed bool) *schema.Schema {
 	r := &schema.Resource{
-		Schema: buildSchemaFromObject(m),
+		Schema: buildSchemaFromObject(m, computed),
 	}
 	return &schema.Schema{
 		Type:     schema.TypeList,
 		Elem:     r,
 		Optional: true,
-		Computed: true,
+		Computed: computed,
 	}
 }
 
-func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
+func buildSchemaFromObject(m interface{}, computed bool) map[string]*schema.Schema {
 	sm := map[string]*schema.Schema{}
 
 	val := reflect.ValueOf(m).Elem()
@@ -66,7 +66,7 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 					Type: schema.TypeString,
 				},
 				Optional: true,
-				Computed: true,
+				Computed: computed,
 			}
 
 			continue
@@ -85,7 +85,7 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 					Type: schema.TypeString,
 				},
 				Optional: true,
-				Computed: true,
+				Computed: computed,
 			}
 			continue
 		}
@@ -93,7 +93,7 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 			sm["Schema"] = &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				Computed: computed,
 			}
 			continue
 		}
@@ -109,18 +109,18 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 						Type: schema.TypeString,
 					},
 					Optional: true,
-					Computed: true,
+					Computed: computed,
 				}
 			case "models.DhcpOption", "*models.DhcpOption":
-				sm[fieldName] = buildSchemaListFromObject(&models.DhcpOption{})
+				sm[fieldName] = buildSchemaListFromObject(&models.DhcpOption{}, computed)
 
 			case "models.TemplateInfo":
-				sm[fieldName] = buildSchemaListFromObject(&models.TemplateInfo{})
+				sm[fieldName] = buildSchemaListFromObject(&models.TemplateInfo{}, computed)
 			case "uint8":
 				sm[fieldName] = &schema.Schema{
 					Type:     schema.TypeString,
 					Optional: true,
-					Computed: true,
+					Computed: computed,
 				}
 			default:
 				fmt.Printf("[DEBUG] UNKNOWN List Field Name: %s (%s),\t Tag Value: %s\n",
@@ -133,24 +133,24 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 		switch typeField.Type.String() {
 		case "models.OsInfo":
 			// Singleton struct - encode as a list for now.
-			sm[fieldName] = buildSchemaListFromObject(&models.OsInfo{})
+			sm[fieldName] = buildSchemaListFromObject(&models.OsInfo{}, computed)
 		case "string", "net.IP", "uuid.UUID", "time.Time":
 			sm[fieldName] = &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				Computed: computed,
 			}
 		case "bool":
 			sm[fieldName] = &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
-				Computed: true,
+				Computed: computed,
 			}
 		case "int", "int32", "uint8":
 			sm[fieldName] = &schema.Schema{
 				Type:     schema.TypeInt,
 				Optional: true,
-				Computed: true,
+				Computed: computed,
 			}
 		default:
 			fmt.Printf("[DEBUG] UNKNOWN Base Field Name: %s (%s),\t Tag Value: %s\n",
@@ -162,20 +162,36 @@ func buildSchemaFromObject(m interface{}) map[string]*schema.Schema {
 	return sm
 }
 
+func dataSourceGeneric(pref string) *schema.Resource {
+	log.Printf("[DEBUG] [dataSourceGeneric] Initializing data structure: %s\n", pref)
+	m, _ := models.New(pref)
+	r := buildSchema(m, false)
+	r.Read = createDefaultDataSourceReadFunction(m)
+	r.Create = nil
+	r.Update = nil
+	r.Delete = nil
+	r.Importer = nil
+	r.Exists = nil
+	return r
+}
+
 func resourceGeneric(pref string) *schema.Resource {
 	log.Printf("[DEBUG] [resourceGeneric] Initializing data structure: %s\n", pref)
 	m, _ := models.New(pref)
-	return buildSchema(m)
+	return buildSchema(m, true)
 }
 
-func buildSchema(m models.Model) *schema.Resource {
+func buildSchema(m models.Model, computed bool) *schema.Resource {
 	r := &schema.Resource{
 		Create: createDefaultCreateFunction(m),
 		Read:   createDefaultReadFunction(m),
 		Update: createDefaultUpdateFunction(m),
 		Delete: createDefaultDeleteFunction(m),
 		Exists: createDefaultExistsFunction(m),
-		Schema: buildSchemaFromObject(m),
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
+		Schema: buildSchemaFromObject(m, computed),
 	}
 
 	return r
@@ -449,6 +465,23 @@ func createDefaultCreateFunction(m models.Model) func(*schema.ResourceData, inte
 	}
 }
 
+func createDefaultDataSourceReadFunction(m models.Model) func(*schema.ResourceData, interface{}) error {
+	return func(d *schema.ResourceData, meta interface{}) error {
+		cc := meta.(*Config)
+
+		id := d.Get(m.KeyName()).(string)
+		d.SetId(id)
+
+		log.Printf("[DEBUG] [dataSource%sRead] reading %s\n", m.Prefix(), id)
+
+		answer, err := cc.session.GetModel(m.Prefix(), id)
+		if err != nil {
+			return err
+		}
+
+		return updateResourceData(answer, d)
+	}
+}
 func createDefaultReadFunction(m models.Model) func(*schema.ResourceData, interface{}) error {
 	return func(d *schema.ResourceData, meta interface{}) error {
 		cc := meta.(*Config)

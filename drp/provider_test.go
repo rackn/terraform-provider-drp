@@ -73,7 +73,7 @@ func TestMain(m *testing.M) {
 		"--static-port", "10032",
 		"--tftp-port", "10033",
 		"--dhcp-port", "10034",
-		"--pxe-port", "10035",
+		"--binl-port", "10035",
 		"--fake-pinger",
 		"--drp-id", "Fred",
 		"--backend", "memory:///",
