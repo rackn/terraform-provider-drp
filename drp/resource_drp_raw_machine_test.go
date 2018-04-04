@@ -25,12 +25,13 @@ var testAccDrpRawMachine_basic = `
 
 func TestAccDrpRawMachine_basic(t *testing.T) {
 	raw_machine := models.Machine{Name: "mach11",
-		Uuid:     uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7c"),
-		Secret:   "12",
-		Stage:    "none",
-		BootEnv:  "local",
-		Runnable: true,
-		Meta:     map[string]string{"feature-flags": "change-stage-v2", "field1": "value1", "field2": "value2"},
+		Uuid:        uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7c"),
+		Secret:      "12",
+		Stage:       "none",
+		BootEnv:     "local",
+		Runnable:    true,
+		CurrentTask: -1,
+		Meta:        map[string]string{"feature-flags": "change-stage-v2", "field1": "value1", "field2": "value2"},
 	}
 	raw_machine.Fill()
 
@@ -191,13 +192,14 @@ var testAccDrpRawMachine_withParams = `
 
 func TestAccDrpRawMachine_withParams(t *testing.T) {
 	raw_machine := models.Machine{
-		Name:     "mach11",
-		Uuid:     uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7c"),
-		Secret:   "12",
-		Stage:    "none",
-		BootEnv:  "local",
-		Runnable: true,
-		Meta:     map[string]string{"feature-flags": "change-stage-v2"},
+		Name:        "mach11",
+		Uuid:        uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7c"),
+		Secret:      "12",
+		Stage:       "none",
+		BootEnv:     "local",
+		Runnable:    true,
+		CurrentTask: -1,
+		Meta:        map[string]string{"feature-flags": "change-stage-v2"},
 		Params: map[string]interface{}{
 			"test/string": "fred",
 			"test/int":    3,
