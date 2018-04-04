@@ -37,7 +37,8 @@ func TestAccDrpMachine_basic(t *testing.T) {
 			"terraform/allocated": true,
 			"terraform/managed":   true,
 		},
-		Meta: map[string]string{"feature-flags": "change-stage-v2", "field1": "value1", "field2": "value2"},
+		CurrentTask: -1,
+		Meta:        map[string]string{"feature-flags": "change-stage-v2", "field1": "value1", "field2": "value2"},
 	}
 	machine.Fill()
 

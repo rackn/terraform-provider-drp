@@ -20,7 +20,8 @@ var testAccDrpStage_basic = `
 
 func TestAccDrpStage_basic(t *testing.T) {
 	stage := models.Stage{Name: "foo",
-		Meta: map[string]string{"field1": "value1", "field2": "value2"},
+		Meta:       map[string]string{"field1": "value1", "field2": "value2"},
+		RunnerWait: true,
 	}
 	stage.Fill()
 
@@ -69,7 +70,7 @@ var testAccDrpStage_change_2 = `
 		Tasks = [ "t3", "t4", "t5" ]
 		Profiles = [ "p2", "p3" ]
 		Reboot = false
-		RunnerWait = false
+		RunnerWait = true
 	}`
 
 func TestAccDrpStage_change(t *testing.T) {
@@ -98,9 +99,10 @@ func TestAccDrpStage_change(t *testing.T) {
 			{Name: "t3", Path: "jill1", Contents: "temp2"},
 			{Name: "t4", Path: "jill2", Contents: "really actual stuff"},
 		},
-		BootEnv:  "local",
-		Tasks:    []string{"t3", "t4", "t5"},
-		Profiles: []string{"p2", "p3"},
+		BootEnv:    "local",
+		Tasks:      []string{"t3", "t4", "t5"},
+		Profiles:   []string{"p2", "p3"},
+		RunnerWait: true,
 	}
 	stage2.Fill()
 

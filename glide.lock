@@ -1,5 +1,5 @@
 hash: 3e5186e8b7b5da2b89790346056808ffa79815712ddf914829c72069276830ef
-updated: 2018-02-12T14:34:21.322972-06:00
+updated: 2018-04-02T23:29:47.934856-04:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: 2bd8b58cf4275aeb086ade613de226773e29e853
@@ -46,21 +46,25 @@ imports:
 - name: github.com/dgrijalva/jwt-go
   version: a539ee1a749a2b895533f979515ac7e6e0f5b650
 - name: github.com/digitalrebar/logger
-  version: df37e916ed309e30f623151516522f436f5aa73c
+  version: b457bcdb411872e1b719c8d9e1bf3cd669e480ee
 - name: github.com/digitalrebar/pinger
   version: 4b06d02345cad02a772ff21f13e1ef3551c943d4
 - name: github.com/digitalrebar/provision
-  version: c39a1adbf2ea0ddb21d2a9e82da8504ccc04e2bf
+  version: aa9bbfe6c3b00470c7e93bb2f0edbc3fab9aec7a
   subpackages:
   - api
   - backend
   - backend/index
+  - embedded
   - frontend
   - midlayer
   - models
+  - plugin/mux
   - server
 - name: github.com/digitalrebar/store
   version: 2c250af948738fedc26bf17345ad9938e3acec93
+- name: github.com/elazarl/go-bindata-assetfs
+  version: 30f82fa23fd844bd5bb1e5f216db87fd77b5eb43
 - name: github.com/elithrar/simple-scrypt
   version: 2325946f714c95de4a6088202c402fbdfa64163b
 - name: github.com/ghodss/yaml
