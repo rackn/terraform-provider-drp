@@ -53,6 +53,12 @@ func resourceMachine() *schema.Resource {
 	r.Update = resourceMachineUpdate
 	r.Delete = resourceMachineDelete
 
+	// Define what the machines decommision workflow
+	r.Schema["decommission_workflow"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
 	// Define what the machines completion stage.
 	r.Schema["completion_stage"] = &schema.Schema{
 		Type:     schema.TypeString,
@@ -364,17 +370,22 @@ func resourceMachineDelete(d *schema.ResourceData, meta interface{}) error {
 	machineObj := obj.(*models.Machine)
 	newObj := models.Clone(machineObj).(*models.Machine)
 
-	if ns, ok := d.GetOk("decommission_stage"); ok {
-		newObj.Stage = ns.(string)
+
+	if nw, ok := d.GetOk("decommission_workflow"); ok {
+		newObj.Workflow = nw.(string)
 	} else {
-		if machineObj.Stage != "" {
-			newObj.Stage = "discover"
+		if ns, ok := d.GetOk("decommission_stage"); ok {
+			newObj.Stage = ns.(string)
 		} else {
-			newObj.BootEnv = "sledgehammer"
+			if machineObj.Stage != "" {
+				newObj.Stage = "discover"
+			} else {
+				newObj.BootEnv = "sledgehammer"
+			}
 		}
+		// Since we are rebooting, set not runnable.
+		newObj.Runnable = false
 	}
-	// Since we are rebooting, set not runnable.
-	newObj.Runnable = false
 
 	// Remove the profiles
 	if ol, ok := d.GetOk("add_profiles"); ok {
