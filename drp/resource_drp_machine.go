@@ -53,14 +53,26 @@ func resourceMachine() *schema.Resource {
 	r.Update = resourceMachineUpdate
 	r.Delete = resourceMachineDelete
 
+	// Define what the machines completion stage.
+	r.Schema["completion_stage"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
 	// Define what the machines decommision workflow
 	r.Schema["decommission_workflow"] = &schema.Schema{
 		Type:     schema.TypeString,
 		Optional: true,
 	}
 
-	// Define what the machines completion stage.
-	r.Schema["completion_stage"] = &schema.Schema{
+	// Define what the machines decommision workflow
+	r.Schema["decommission_icon"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
+	// Define what the machines decommision workflow
+	r.Schema["decommission_color"] = &schema.Schema{
 		Type:     schema.TypeString,
 		Optional: true,
 	}
@@ -370,6 +382,17 @@ func resourceMachineDelete(d *schema.ResourceData, meta interface{}) error {
 	machineObj := obj.(*models.Machine)
 	newObj := models.Clone(machineObj).(*models.Machine)
 
+	if nc, ok := d.GetOk("decommission_color"); ok {
+		newObj.Meta["color"] = nc.(string)
+	} else {
+		newObj.Meta["color"] = "black"
+	}
+
+	if ni, ok := d.GetOk("decommission_icon"); ok {
+		newObj.Meta["icon"] = ni.(string)
+	} else {
+		newObj.Meta["icon"] = "map outline"
+	}
 
 	if nw, ok := d.GetOk("decommission_workflow"); ok {
 		newObj.Workflow = nw.(string)
@@ -377,10 +400,14 @@ func resourceMachineDelete(d *schema.ResourceData, meta interface{}) error {
 		if ns, ok := d.GetOk("decommission_stage"); ok {
 			newObj.Stage = ns.(string)
 		} else {
-			if machineObj.Stage != "" {
-				newObj.Stage = "discover"
+			if machineObj.Workflow != "" {
+				newObj.Workflow = "discover"
 			} else {
-				newObj.BootEnv = "sledgehammer"
+				if machineObj.Stage != "" {
+					newObj.Stage = "discover"
+				} else {
+					newObj.BootEnv = "sledgehammer"
+				}
 			}
 		}
 		// Since we are rebooting, set not runnable.
