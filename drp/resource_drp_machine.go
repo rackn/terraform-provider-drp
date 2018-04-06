@@ -410,7 +410,7 @@ func resourceMachineDelete(d *schema.ResourceData, meta interface{}) error {
 				}
 			}
 		}
-		// Since we are rebooting, set not runnable.
+		// Runnable should only be set to false if we aren't using workflows.
 		newObj.Runnable = false
 	}
 
