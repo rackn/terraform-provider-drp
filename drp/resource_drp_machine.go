@@ -447,9 +447,13 @@ func resourceMachineDelete(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
+	// ugly hack to give the runner time to figure out what to do
+	time.Sleep(2*time.Second)
+
 	if err := machineDo(cc, machineObj.UUID(), "nextbootpxe"); err != nil {
 		log.Printf("[ERROR] [resourceMachineRelease] Unable to mark the machine for pxe next boot: %s\n", machineObj.UUID())
 	}
+
 	if err := machineDo(cc, machineObj.UUID(), "powercycle"); err != nil {
 		log.Printf("[ERROR] [resourceMachineRelease] Unable to power cycle machine: %s\n", machineObj.UUID())
 	}
