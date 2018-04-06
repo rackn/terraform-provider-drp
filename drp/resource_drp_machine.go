@@ -59,6 +59,24 @@ func resourceMachine() *schema.Resource {
 		Optional: true,
 	}
 
+	// Define what the machines decommision workflow
+	r.Schema["decommission_workflow"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
+	// Define what the machines decommision workflow
+	r.Schema["decommission_icon"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
+	// Define what the machines decommision workflow
+	r.Schema["decommission_color"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
 	// Define what the machines decommision stage
 	r.Schema["decommission_stage"] = &schema.Schema{
 		Type:     schema.TypeString,
@@ -364,17 +382,37 @@ func resourceMachineDelete(d *schema.ResourceData, meta interface{}) error {
 	machineObj := obj.(*models.Machine)
 	newObj := models.Clone(machineObj).(*models.Machine)
 
-	if ns, ok := d.GetOk("decommission_stage"); ok {
-		newObj.Stage = ns.(string)
+	if nc, ok := d.GetOk("decommission_color"); ok {
+		newObj.Meta["color"] = nc.(string)
 	} else {
-		if machineObj.Stage != "" {
-			newObj.Stage = "discover"
-		} else {
-			newObj.BootEnv = "sledgehammer"
-		}
+		newObj.Meta["color"] = "black"
 	}
-	// Since we are rebooting, set not runnable.
-	newObj.Runnable = false
+
+	if ni, ok := d.GetOk("decommission_icon"); ok {
+		newObj.Meta["icon"] = ni.(string)
+	} else {
+		newObj.Meta["icon"] = "map outline"
+	}
+
+	if nw, ok := d.GetOk("decommission_workflow"); ok {
+		newObj.Workflow = nw.(string)
+	} else {
+		if ns, ok := d.GetOk("decommission_stage"); ok {
+			newObj.Stage = ns.(string)
+		} else {
+			if machineObj.Workflow != "" {
+				newObj.Workflow = "discover"
+			} else {
+				if machineObj.Stage != "" {
+					newObj.Stage = "discover"
+				} else {
+					newObj.BootEnv = "sledgehammer"
+				}
+			}
+		}
+		// Runnable should only be set to false if we aren't using workflows.
+		newObj.Runnable = false
+	}
 
 	// Remove the profiles
 	if ol, ok := d.GetOk("add_profiles"); ok {
@@ -409,9 +447,13 @@ func resourceMachineDelete(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
+	// ugly hack to give the runner time to figure out what to do
+	time.Sleep(2*time.Second)
+
 	if err := machineDo(cc, machineObj.UUID(), "nextbootpxe"); err != nil {
 		log.Printf("[ERROR] [resourceMachineRelease] Unable to mark the machine for pxe next boot: %s\n", machineObj.UUID())
 	}
+
 	if err := machineDo(cc, machineObj.UUID(), "powercycle"); err != nil {
 		log.Printf("[ERROR] [resourceMachineRelease] Unable to power cycle machine: %s\n", machineObj.UUID())
 	}
