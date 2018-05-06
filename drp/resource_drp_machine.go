@@ -11,47 +11,27 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func dataSourceMachine() *schema.Resource {
-	log.Println("[DEBUG] [dataSourceMachine] Initializing data structure")
-
-	m, _ := models.New("machine")
-	r := buildSchema(m, false)
-	r.Create = nil
-	r.Update = nil
-	r.Delete = nil
-	r.Importer = nil
-	r.Exists = nil
-
-	// Machines also have filters
-	r.Schema["filters"] = &schema.Schema{
-		Type:     schema.TypeList,
-		Optional: true,
-		ForceNew: true,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"name": {
-					Type:     schema.TypeString,
-					Optional: true,
-				},
-				"jsonvalue": {
-					Type:     schema.TypeString,
-					Optional: true,
-				},
-			},
+func init() {
+	r := &schema.Resource{
+		Schema: map[string]*schema.Schema{},
+		Create: resourcemachinesCreate,
+		Read:   resourcemachinesRead,
+		Update: resourcemachinesUpdate,
+		Delete: resourcemachinesDelete,
+		Exists: resourcemachinesExists,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
 		},
 	}
-	return r
-}
-
-func resourceMachine() *schema.Resource {
-	log.Println("[DEBUG] [resourceMachine] Initializing data structure")
-
-	m, _ := models.New("machine")
-	r := buildSchema(m, true)
 
 	r.Create = resourceMachineCreate
 	r.Update = resourceMachineUpdate
 	r.Delete = resourceMachineDelete
+
+	// Clone the other schema - shallow is enough
+	for k, s := range machinesResourceSchema {
+		r.Schema[k] = s
+	}
 
 	// Define what the machines completion stage.
 	r.Schema["completion_stage"] = &schema.Schema{
@@ -110,7 +90,8 @@ func resourceMachine() *schema.Resource {
 			},
 		},
 	}
-	return r
+
+	theResourcesMap["drp_machine"] = r
 }
 
 func allocateMachine(cc *Config, filters []string) (*models.Machine, error) {
@@ -221,7 +202,7 @@ func machineDo(cc *Config, uuid, action string) error {
 }
 
 func updateMachine(cc *Config, machineObj *models.Machine, d *schema.ResourceData) (*models.Machine, error) {
-	obj, e := buildModel(machineObj, d)
+	obj, e := buildmachinesModel(machineObj, d)
 	if e != nil {
 		log.Printf("[ERROR] [updateMachine] Unable to build model: %v\n", e)
 		return nil, e
@@ -345,7 +326,7 @@ func resourceMachineCreate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
-	return updateResourceData(answer, d)
+	return updatemachinesResourceData(answer, d)
 }
 
 func resourceMachineUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -366,7 +347,7 @@ func resourceMachineUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[DEBUG] Done Modifying machine %s\n", d.Id())
-	return updateResourceData(machineObj, d)
+	return updatemachinesResourceData(machineObj, d)
 }
 
 // This function doesn't really *delete* a drp managed machine but releases (read, turns off) the machine.

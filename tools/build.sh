@@ -38,6 +38,12 @@ glide install
 
 . tools/version.sh
 
+# Generate the code
+go get -u github.com/rackn/terraform-provider-drp/drp_generator
+cd drp
+drp_generator
+cd ..
+
 echo "Version = $Prepart$MajorV.$MinorV.$PatchV$Extra-$GITHASH"
 
 VERFLAGS="-X main.RS_MAJOR_VERSION=$MajorV \

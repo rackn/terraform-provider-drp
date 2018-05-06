@@ -6,10 +6,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/digitalrebar/provision/models"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
+
+var theResourcesMap = map[string]*schema.Resource{}
+var theDataSourcesMap = map[string]*schema.Resource{}
 
 /*
  * Enable terraform to use DRP as a provider.  Fill out the
@@ -45,31 +47,10 @@ func Provider() terraform.ResourceProvider {
 			},
 		},
 
-		ResourcesMap: map[string]*schema.Resource{
-			"drp_machine": resourceMachine(),
-		},
-		DataSourcesMap: map[string]*schema.Resource{
-			"drp_machine": dataSourceMachine(),
-		},
+		ResourcesMap:   theResourcesMap,
+		DataSourcesMap: theDataSourcesMap,
 
 		ConfigureFunc: providerConfigure,
-	}
-
-	for _, m := range models.All() {
-		pref := m.Prefix()
-		// These are generally read-only.  preferences is the one to come.
-		if pref == "preferences" || pref == "plugin_providers" ||
-			pref == "interfaces" || pref == "jobs" || pref == "leases" {
-			continue
-		}
-
-		spref := strings.TrimRight(pref, "s")
-		if pref == "machines" {
-			// Machine is already added, add raw_machine to manipulate raw machine objects
-			spref = "raw_machine"
-		}
-		p.ResourcesMap[fmt.Sprintf("drp_%s", spref)] = resourceGeneric(pref)
-		p.DataSourcesMap[fmt.Sprintf("drp_%s", spref)] = dataSourceGeneric(pref)
 	}
 
 	return p

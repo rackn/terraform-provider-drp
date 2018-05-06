@@ -16,6 +16,7 @@ install:
 - ./tools/package.sh
 - ./tools/publish.sh
 script:
+- make fmt
 - make test
 - make testacc
 - make vendor-status
