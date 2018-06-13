@@ -30,9 +30,21 @@ $ cd $GOPATH/src/github.com/hashicorp/terraform-provider-drp
 $ make build
 ```
 
-Using the provider
-----------------------
-## Fill in for each provider
+Using the Digital Rebar Provision (DRP) provider
+------------------------------------------------
+
+DRP Terraform Provider documentation is maintained with the project integrations documentation, please see
+https://provision.readthedocs.io/en/tip/doc/integrations/terraform.html
+
+The DRP Terraform Provider uses a pair of Machine Parameters to create an inventory pool. Only machines with these parameters will be available to the provider.
+
+The terraform/managed parameter determines the basic inventory availability. This flag must be set to true for Terraform to find machines.
+
+The terraform/allocated parameter determines when machines have been assigned to a Terraform plan. When true, the machine is now being managed by Terraform. When false, the machine is available for allocation.
+
+Using the RackN terraform-ready stage will automatically set these two parameters.
+
+The Terraform Provider can read additional fields when requesting inventory. In this way, users can request machines with specific characteristics.
 
 Developing the Provider
 ---------------------------
