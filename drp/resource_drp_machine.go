@@ -53,6 +53,12 @@ func resourceMachine() *schema.Resource {
 	r.Update = resourceMachineUpdate
 	r.Delete = resourceMachineDelete
 
+	r.Timeouts = &schema.ResourceTimeout{
+		Create: schema.DefaultTimeout(25 * time.Minute),
+		Update: schema.DefaultTimeout(10 * time.Minute),
+		Delete: schema.DefaultTimeout(10 * time.Minute),
+	}
+
 	// Define what the machines completion stage.
 	r.Schema["completion_stage"] = &schema.Schema{
 		Type:     schema.TypeString,
@@ -325,7 +331,7 @@ func resourceMachineCreate(d *schema.ResourceData, meta interface{}) error {
 		Pending:    []string{"9:"},
 		Target:     []string{"6:"},
 		Refresh:    getMachineStatus(cc, machineObj.UUID(), stages),
-		Timeout:    25 * time.Minute,
+		Timeout:    d.Timeout(schema.TimeoutCreate),
 		Delay:      10 * time.Second,
 		MinTimeout: 3 * time.Second,
 	}
