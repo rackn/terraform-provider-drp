@@ -6,6 +6,8 @@ WEBSITE_REPO=github.com/hashicorp/terraform-website
 default: build
 
 build: fmtcheck
+	go get github.com/kardianos/govendor
+	tools/build.sh
 	go install
 
 test: fmtcheck
