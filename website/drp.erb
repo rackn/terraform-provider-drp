@@ -1,0 +1,37 @@
+
+<% wrap_layout :inner do %>
+    <% content_for :sidebar do %>
+        <div class="docs-sidebar hidden-print affix-top" role="complementary">
+            <ul class="nav docs-sidenav">
+                <li<%= sidebar_current("docs-home") %>>
+                    <a href="/docs/providers/index.html">All Providers</a>
+                </li>
+
+                <li<%= sidebar_current("docs-drp-index") %>>
+                    <a href="/docs/providers/drp/index.html">DRP Provider</a>
+                </li>
+
+                <li<%= sidebar_current("docs-drp-datasource") %>>
+                    <a href="#">Data Sources</a>
+                    <ul class="nav nav-visible">
+                        <li<%= sidebar_current("docs-drp-datasource-machine") %>>
+                            <a href="/docs/providers/drp/d/machine.html">drp_machine</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li<%= sidebar_current("docs-drp-resource") %>>
+                    <a href="#">DRP Resources</a>
+                    <ul class="nav nav-visible">
+                        <li<%= sidebar_current("docs-drp-resource-machine") %>>
+                            <a href="/docs/providers/drp/r/machine.html">drp_machine</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    <% end %>
+
+    <%= yield %>
+<% end %>
+

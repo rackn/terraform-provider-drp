@@ -65,8 +65,9 @@ func buildSchemaFromObject(m interface{}, computed bool) map[string]*schema.Sche
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Optional: true,
-				Computed: computed,
+				Optional:    true,
+				Computed:    computed,
+				Description: typeField.Doc,
 			}
 
 			continue
@@ -84,16 +85,18 @@ func buildSchemaFromObject(m interface{}, computed bool) map[string]*schema.Sche
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Optional: true,
-				Computed: computed,
+				Optional:    true,
+				Computed:    computed,
+				Description: typeField.Doc,
 			}
 			continue
 		}
 		if fieldName == "Schema" {
 			sm["Schema"] = &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: computed,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    computed,
+				Description: typeField.Doc,
 			}
 			continue
 		}
@@ -108,19 +111,23 @@ func buildSchemaFromObject(m interface{}, computed bool) map[string]*schema.Sche
 					Elem: &schema.Schema{
 						Type: schema.TypeString,
 					},
-					Optional: true,
-					Computed: computed,
+					Optional:    true,
+					Computed:    computed,
+					Description: typeField.Doc,
 				}
 			case "models.DhcpOption", "*models.DhcpOption":
 				sm[fieldName] = buildSchemaListFromObject(&models.DhcpOption{}, computed)
+				sm[fieldName].Description = typeField.Doc
 
 			case "models.TemplateInfo":
 				sm[fieldName] = buildSchemaListFromObject(&models.TemplateInfo{}, computed)
+				sm[fieldName].Description = typeField.Doc
 			case "uint8":
 				sm[fieldName] = &schema.Schema{
-					Type:     schema.TypeString,
-					Optional: true,
-					Computed: computed,
+					Type:        schema.TypeString,
+					Optional:    true,
+					Computed:    computed,
+					Description: typeField.Doc,
 				}
 			default:
 				fmt.Printf("[DEBUG] UNKNOWN List Field Name: %s (%s),\t Tag Value: %s\n",
@@ -134,23 +141,27 @@ func buildSchemaFromObject(m interface{}, computed bool) map[string]*schema.Sche
 		case "models.OsInfo":
 			// Singleton struct - encode as a list for now.
 			sm[fieldName] = buildSchemaListFromObject(&models.OsInfo{}, computed)
+			sm[fieldName].Description = typeField.Doc
 		case "string", "net.IP", "uuid.UUID", "time.Time":
 			sm[fieldName] = &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: computed,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    computed,
+				Description: typeField.Doc,
 			}
 		case "bool":
 			sm[fieldName] = &schema.Schema{
-				Type:     schema.TypeBool,
-				Optional: true,
-				Computed: computed,
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    computed,
+				Description: typeField.Doc,
 			}
 		case "int", "int32", "uint8":
 			sm[fieldName] = &schema.Schema{
-				Type:     schema.TypeInt,
-				Optional: true,
-				Computed: computed,
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Computed:    computed,
+				Description: typeField.Doc,
 			}
 		default:
 			fmt.Printf("[DEBUG] UNKNOWN Base Field Name: %s (%s),\t Tag Value: %s\n",
