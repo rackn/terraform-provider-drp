@@ -13,4 +13,7 @@ import:
 - package: github.com/VictorLowther/jsonpatch2
   subpackages:
   - utils
--package: github.com/jessevdk/go-flags
+- package: github.com/jessevdk/go-flags
+- package: golang.org/x/crypto/nacl
+  subpackages:
+  - sign
