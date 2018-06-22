@@ -1,5 +1,5 @@
-hash: 3e5186e8b7b5da2b89790346056808ffa79815712ddf914829c72069276830ef
-updated: 2018-04-02T23:29:47.934856-04:00
+hash: fbb0631f4704047e73a80d5e84f0ee991a36dac65301f0e092645ecb31132a25
+updated: 2018-06-22T11:48:15.04322-05:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: 2bd8b58cf4275aeb086ade613de226773e29e853
@@ -55,7 +55,6 @@ imports:
   - api
   - backend
   - backend/index
-  - embedded
   - frontend
   - midlayer
   - models
@@ -63,16 +62,14 @@ imports:
   - server
 - name: github.com/digitalrebar/store
   version: 99f93481f3bc95a3fdbcd028778c0ddc9d826932
-- name: github.com/elazarl/go-bindata-assetfs
-  version: 30f82fa23fd844bd5bb1e5f216db87fd77b5eb43
 - name: github.com/elithrar/simple-scrypt
   version: 2325946f714c95de4a6088202c402fbdfa64163b
 - name: github.com/ghodss/yaml
   version: 0ca9ea5df5451ffdf184b4428c902747c2c11cd7
-- name: github.com/gin-contrib/gzip
-  version: 4fbfcc6122759afed2efbc762c4c41164a403951
 - name: github.com/gin-contrib/cors
   version: 88488351b0df049b2d3d65cab583c6bed894abb2
+- name: github.com/gin-contrib/gzip
+  version: 4fbfcc6122759afed2efbc762c4c41164a403951
 - name: github.com/gin-contrib/location
   version: 3e26b9c1187f298ae3669e41d1b696d256113f66
 - name: github.com/gin-contrib/sse
@@ -163,6 +160,8 @@ imports:
   - terraform
 - name: github.com/hashicorp/yamux
   version: d1caa6c97c9fc1cc9e83bbe34d0603f9ff0ce8bd
+- name: github.com/jessevdk/go-flags
+  version: 6cf8f02b4ae8ba723ddc64dcfd403e530c06d927
 - name: github.com/jmespath/go-jmespath
   version: bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d
 - name: github.com/json-iterator/go
@@ -220,10 +219,21 @@ imports:
 - name: github.com/xeipuuv/gojsonschema
   version: 0c8571ac0ce161a5feb57375a9cdf148c98c0f70
 - name: golang.org/x/crypto
-  version: 81e90905daefcd6fd217b62423c0908922eadb30
+  version: a49355c7e3f8fe157a85be2f77e6e269a0f89602
   subpackages:
+  - curve25519
+  - ed25519
+  - ed25519/internal/edwards25519
+  - internal/subtle
+  - nacl
+  - nacl/box
+  - nacl/secretbox
+  - nacl/sign
   - pbkdf2
+  - poly1305
+  - salsa20/salsa
   - scrypt
+  - sign
 - name: golang.org/x/net
   version: 66aacef3dd8a676686c7ae3716979581e8b03c47
   subpackages:
@@ -283,6 +293,4 @@ imports:
   version: d521390733761fe1db13de575c253afd5c743085
 - name: gopkg.in/yaml.v2
   version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
-testImports:
-- name: github.com/jessevdk/go-flags
-  version: 6cf8f02b4ae8ba723ddc64dcfd403e530c06d927
+testImports: []
