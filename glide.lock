@@ -50,7 +50,7 @@ imports:
 - name: github.com/digitalrebar/pinger
   version: 4b06d02345cad02a772ff21f13e1ef3551c943d4
 - name: github.com/digitalrebar/provision
-  version: 8d50d4fc52c16e393b8f7650a2b7f41dbd3d090a
+  version: aa4d113c7a433d6a81fb985275be01901ae28e6d
   subpackages:
   - api
   - backend
@@ -62,13 +62,15 @@ imports:
   - plugin/mux
   - server
 - name: github.com/digitalrebar/store
-  version: 2c250af948738fedc26bf17345ad9938e3acec93
+  version: 99f93481f3bc95a3fdbcd028778c0ddc9d826932
 - name: github.com/elazarl/go-bindata-assetfs
   version: 30f82fa23fd844bd5bb1e5f216db87fd77b5eb43
 - name: github.com/elithrar/simple-scrypt
   version: 2325946f714c95de4a6088202c402fbdfa64163b
 - name: github.com/ghodss/yaml
   version: 0ca9ea5df5451ffdf184b4428c902747c2c11cd7
+- name: github.com/gin-contrib/gzip
+  version: 4fbfcc6122759afed2efbc762c4c41164a403951
 - name: github.com/gin-contrib/cors
   version: 88488351b0df049b2d3d65cab583c6bed894abb2
 - name: github.com/gin-contrib/location
@@ -202,7 +204,7 @@ imports:
   - internal/xlog
   - lzma
 - name: github.com/VictorLowther/jsonpatch2
-  version: 728f2fee2a186b5764d9c9a8fa904279a22b1960
+  version: a3386fdb359634d937f41d6f66af3df4d25c5ae4
   subpackages:
   - utils
 - name: github.com/vishvananda/netlink
