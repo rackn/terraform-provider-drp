@@ -72,5 +72,6 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 *Note:* In this case, acceptances run locally without external resources.
 
 ```sh
+$ ulimit -n 2560 # for MACs
 $ make testacc
 ```

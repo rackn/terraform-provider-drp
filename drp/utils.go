@@ -72,8 +72,29 @@ func buildSchemaFromObject(m interface{}, computed bool) map[string]*schema.Sche
 			continue
 		}
 
+		// We don't handle maps generically
+		// Members is map[string][]string
+		if fieldName == "Members" {
+			sm["Members"] = &schema.Schema{
+				Type: schema.TypeMap,
+				Elem: &schema.Schema{
+					Type: schema.TypeList,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					Optional: true,
+					Computed: computed,
+				},
+				Optional: true,
+				Computed: computed,
+			}
+
+			continue
+
+		}
+
 		//
-		// This is a cluster.  Terraform doesn't generic interface{}
+		// This is a cluster.  Terraform doesn't do generic interface{}
 		// basically, interface{} and map[string]interface{}
 		//
 		// Will try some things.
@@ -116,6 +137,8 @@ func buildSchemaFromObject(m interface{}, computed bool) map[string]*schema.Sche
 
 			case "models.TemplateInfo":
 				sm[fieldName] = buildSchemaListFromObject(&models.TemplateInfo{}, computed)
+			case "*models.Claim":
+				sm[fieldName] = buildSchemaListFromObject(&models.Claim{}, computed)
 			case "uint8":
 				sm[fieldName] = &schema.Schema{
 					Type:     schema.TypeString,
@@ -264,7 +287,7 @@ func updateResourceData(m models.Model, d *schema.ResourceData) error {
 			listType := typeField.Type.String()[2:]
 
 			switch listType {
-			case "string", "*models.DhcpOption", "models.DhcpOption", "models.TemplateInfo":
+			case "string", "*models.DhcpOption", "models.DhcpOption", "models.TemplateInfo", "*models.Claim":
 				d.Set(fieldName, valueField.Interface())
 			case "uint8":
 				d.Set(fieldName, fmt.Sprintf("%s", valueField.Interface()))
@@ -371,7 +394,7 @@ func buildModel(m models.Model, d *schema.ResourceData) (models.Model, error) {
 			subType := typeField.Type.Elem()
 
 			switch listType {
-			case "string", "models.TemplateInfo",
+			case "string", "models.TemplateInfo", "*models.Claim",
 				"models.DhcpOption", "*models.DhcpOption":
 
 				data := d.Get(fieldName).([]interface{})
