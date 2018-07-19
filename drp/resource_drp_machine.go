@@ -98,6 +98,13 @@ func resourceMachine() *schema.Resource {
 		},
 	}
 
+
+	// Define what the machines decommision stage
+	r.Schema["pool"] = &schema.Schema{
+		Type:     schema.TypeString,
+		Optional: true,
+	}
+
 	// Machines also have filters
 	r.Schema["filters"] = &schema.Schema{
 		Type:     schema.TypeList,
@@ -298,8 +305,13 @@ func resourceMachineCreate(d *schema.ResourceData, meta interface{}) error {
 	if pval, set := d.GetOk("filters"); set {
 		for _, o := range pval.([]interface{}) {
 			v := o.(map[string]interface{})
-			filters = append(filters, v["name"].(string), v["value"].(string))
+			filters = append(filters, v["name"].(string), v["jsonvalue"].(string))
 		}
+	}
+	if fval, set := d.GetOk("pool"); set {
+		filters = append(filters, "terraform/pool", fval.(string))
+	} else {
+		filters = append(filters, "terraform/pool", "default")
 	}
 	filters = append(filters, "terraform/allocated", "false")
 	filters = append(filters, "terraform/managed", "true")
