@@ -98,7 +98,6 @@ func resourceMachine() *schema.Resource {
 		},
 	}
 
-
 	// Define what the machines decommision stage
 	r.Schema["pool"] = &schema.Schema{
 		Type:     schema.TypeString,
