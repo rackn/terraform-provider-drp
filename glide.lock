@@ -1,5 +1,5 @@
 hash: fbb0631f4704047e73a80d5e84f0ee991a36dac65301f0e092645ecb31132a25
-updated: 2018-06-22T11:48:15.04322-05:00
+updated: 2018-07-20T10:44:57.829432-05:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: 2bd8b58cf4275aeb086ade613de226773e29e853
@@ -33,6 +33,10 @@ imports:
   - private/protocol/xml/xmlutil
   - service/s3
   - service/sts
+- name: github.com/beorn7/perks
+  version: 3a771d992973f24aa725d07868b467d1ddfceafb
+  subpackages:
+  - quantile
 - name: github.com/bgentry/go-netrc
   version: 9fd32a8b3d3d3f9d43c341bfe098430e07609480
   subpackages:
@@ -60,6 +64,7 @@ imports:
   - models
   - plugin/mux
   - server
+  - utils
 - name: github.com/digitalrebar/store
   version: 99f93481f3bc95a3fdbcd028778c0ddc9d826932
 - name: github.com/elithrar/simple-scrypt
@@ -172,6 +177,10 @@ imports:
   - conn
 - name: github.com/mattn/go-isatty
   version: fc9e8d8ef48496124e79ae0df75490096eccf6fe
+- name: github.com/matttproud/golang_protobuf_extensions
+  version: c12348ce28de40eed0136aa2b644d0ee0650e56c
+  subpackages:
+  - pbutil
 - name: github.com/mitchellh/copystructure
   version: d23ffcb85de31694d6ccaa23ccb4a03e55c1303f
 - name: github.com/mitchellh/go-homedir
@@ -190,6 +199,27 @@ imports:
   version: d715325c1fc1f1a22a8272a60dc6783a5ab093ba
   subpackages:
   - netascii
+- name: github.com/prometheus/client_golang
+  version: faf4ec335fe01ae5a6a0eaa34a5a9333bfbd1a30
+  subpackages:
+  - prometheus
+  - prometheus/promhttp
+- name: github.com/prometheus/client_model
+  version: 99fa1f4be8e564e8a6b613da7fa6f46c9edafc6c
+  subpackages:
+  - go
+- name: github.com/prometheus/common
+  version: 7600349dcfe1abd18d72d3a1770870d9800a7801
+  subpackages:
+  - expfmt
+  - internal/bitbucket.org/ww/goautoneg
+  - model
+- name: github.com/prometheus/procfs
+  version: 7d6f385de8bea29190f15ba9931442a0eaef9af7
+  subpackages:
+  - internal/util
+  - nfs
+  - xfs
 - name: github.com/satori/go.uuid
   version: 5bf94b69c6b68ee1b541973bb8e1144db23a194b
 - name: github.com/ugorji/go
