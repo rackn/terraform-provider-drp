@@ -50,7 +50,7 @@ imports:
 - name: github.com/digitalrebar/pinger
   version: 4b06d02345cad02a772ff21f13e1ef3551c943d4
 - name: github.com/digitalrebar/provision
-  version: aa4d113c7a433d6a81fb985275be01901ae28e6d
+  version: ecf6fe8661a02045ce2029ae5164eb05bd9e4f6f
   subpackages:
   - api
   - backend

@@ -74,6 +74,7 @@ func TestMain(m *testing.M) {
 		"--tftp-port", "10033",
 		"--dhcp-port", "10034",
 		"--binl-port", "10035",
+		"--metrics-port", "10036",
 		"--fake-pinger",
 		"--drp-id", "Fred",
 		"--backend", "memory:///",
