@@ -64,11 +64,13 @@ func testAccCreateResources() {
 	p := &models.Profile{Name: "p-test"}
 	ta := &models.Param{Name: "terraform/allocated", Schema: map[string]string{"type": "boolean"}}
 	tm := &models.Param{Name: "terraform/managed", Schema: map[string]string{"type": "boolean"}}
+	tp := &models.Param{Name: "terraform/pool", Schema: map[string]string{"type": "string", "default": "default"}}
 	m := &models.Machine{Name: "mach1", Secret: "12", Params: map[string]interface{}{"terraform/allocated": false, "terraform/managed": true}, Uuid: uuid.Parse("3945838b-be8c-4b35-8b1c-b538ddc71f7e")}
 
 	config.session.CreateModel(p)
 	config.session.CreateModel(ta)
 	config.session.CreateModel(tm)
+	config.session.CreateModel(tp)
 	config.session.CreateModel(m)
 }
 
