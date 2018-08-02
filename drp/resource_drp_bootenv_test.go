@@ -81,8 +81,8 @@ func TestAccDrpBootEnv_change(t *testing.T) {
 		RequiredParams: []string{"p1", "p2"},
 		OptionalParams: []string{"p3", "p4"},
 		Templates: []models.TemplateInfo{
-			{Name: "t1", Path: "fred1", Contents: "temp1"},
-			{Name: "t2", Path: "fred2", Contents: "actual stuff"},
+			{Name: "t1", Path: "fred1", Contents: "temp1", Meta: map[string]string{}},
+			{Name: "t2", Path: "fred2", Contents: "actual stuff", Meta: map[string]string{}},
 		},
 		Kernel:      "jill",
 		Initrds:     []string{"joyce", "julie", "janna"},
@@ -96,8 +96,8 @@ func TestAccDrpBootEnv_change(t *testing.T) {
 		RequiredParams: []string{"p3", "p4"},
 		OptionalParams: []string{"p1", "p2"},
 		Templates: []models.TemplateInfo{
-			{Name: "t3", Path: "jill1", Contents: "temp2"},
-			{Name: "t4", Path: "jill2", Contents: "really actual stuff"},
+			{Name: "t3", Path: "jill1", Contents: "temp2", Meta: map[string]string{}},
+			{Name: "t4", Path: "jill2", Contents: "really actual stuff", Meta: map[string]string{}},
 		},
 		Kernel:     "~jill",
 		Initrds:    []string{"~joyce", "~julie", "~janna"},
