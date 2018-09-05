@@ -3,26 +3,24 @@ Terraform Provider
 
 - Hashicorp Website: https://www.terraform.io
 - RackN Website: https://rackn.com
-- Digitasl Rebar Community:  http://rebar.digital
+- Digital Rebar Community:  http://rebar.digital
 
-Requirements
-------------
+NOTE: For new users, you should use the release managed binaries from https://github.com/rackn/terraform-provider-drp/releases.
+
+NOT Documentation!
+------------------
+
+This page is about building, NOT about using, the provider!  DRP Terraform Provider documentation is maintained with the project integrations documentation, please see https://provision.readthedocs.io/en/tip/doc/integrations/terraform.html
+
+Build Requirements
+------------------
 
 -	[Terraform](https://www.terraform.io/downloads.html) 0.11.x
--	[Go](https://golang.org/doc/install) 1.9 (to build the provider plugin)
+-	[Go](https://golang.org/doc/install) 1.10 (to build the provider plugin)
 -	Digital Rebar terraform/[params] in system (can be imported from RackN content)
-
-
-Documentation
--------------
-
-This page is NOT about using the provider!  DRP Terraform Provider documentation is maintained with the project integrations documentation, please see https://provision.readthedocs.io/en/tip/doc/integrations/terraform.html
-
 
 Building The Provider
 ---------------------
-
-Note: For new users, you should use the release managed binaries from https://github.com/rackn/terraform-provider-drp/releases.
 
 Clone repository to: `$GOPATH/src/github.com/rackn/terraform-provider-drp`
 
