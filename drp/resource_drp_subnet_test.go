@@ -84,7 +84,7 @@ var testAccDrpSubnet_change_2 = `
 		Name = "foo"
 		Enabled = false
 		Proxy = false
-		Subnet = "1.1.1.1/24"
+		Subnet = "1.1.1.0/24"
 		NextServer = "1.1.1.2"
 		ActiveStart = "1.1.1.5"
 		ActiveEnd = "1.1.1.10"
@@ -123,7 +123,7 @@ func TestAccDrpSubnet_change(t *testing.T) {
 	subnet2 := models.Subnet{Name: "foo",
 		ActiveLeaseTime:   121,
 		ReservedLeaseTime: 14401,
-		Subnet:            "1.1.1.1/24",
+		Subnet:            "1.1.1.0/24",
 		NextServer:        net.ParseIP("1.1.1.2"),
 		ActiveStart:       net.ParseIP("1.1.1.5"),
 		ActiveEnd:         net.ParseIP("1.1.1.10"),
