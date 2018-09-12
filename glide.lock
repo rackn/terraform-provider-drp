@@ -54,11 +54,11 @@ imports:
 - name: github.com/dgrijalva/jwt-go
   version: a539ee1a749a2b895533f979515ac7e6e0f5b650
 - name: github.com/digitalrebar/logger
-  version: b457bcdb411872e1b719c8d9e1bf3cd669e480ee
+  version: 043d41e239ca1937c085cb9dc31b5d1a098c1b98
 - name: github.com/digitalrebar/pinger
   version: 4b06d02345cad02a772ff21f13e1ef3551c943d4
 - name: github.com/digitalrebar/provision
-  version: d80ac64c0c2487e2ea2f99a9b2a31066e03d3e24
+  version: 8da90ceaf50f97c0d645c081f0384507e446424e
   subpackages:
   - api
   - backend
@@ -70,7 +70,7 @@ imports:
   - server
   - utils
 - name: github.com/digitalrebar/store
-  version: 99f93481f3bc95a3fdbcd028778c0ddc9d826932
+  version: 63349d4ab20ba3b162635d60d6c3b34c7bb59bd9
 - name: github.com/elithrar/simple-scrypt
   version: 28a8a89db0e1201d1b61b8ee90597fd7d035c0d5
 - name: github.com/ghodss/yaml
