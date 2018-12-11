@@ -118,6 +118,16 @@ func buildSchemaFromObject(m interface{}, computed bool) map[string]*schema.Sche
 			}
 			continue
 		}
+		if fieldName == "SupportedArchitectures" {
+			sm[fieldName] = &schema.Schema{
+				Type:     schema.TypeMap,
+				Elem:     buildSchemaFromObject(&models.ArchInfo{}, computed),
+				Optional: true,
+				Computed: computed,
+			}
+			continue
+
+		}
 
 		if strings.HasPrefix(typeField.Type.String(), "[]") {
 			listType := typeField.Type.String()[2:]
@@ -282,6 +292,24 @@ func updateResourceData(m models.Model, d *schema.ResourceData) error {
 			d.Set("Schema", string(b))
 			continue
 		}
+		if fieldName == "SupportedArchitectures" {
+			answer := map[string]string{}
+
+			drpAnswer := valueField.Interface().(map[string]interface{})
+			for k, v := range drpAnswer {
+				b, e := json.Marshal(v)
+				if e != nil {
+					return e
+				}
+				if s, ok := v.(string); ok {
+					answer[k] = s
+				} else {
+					answer[k] = string(b)
+				}
+			}
+			d.Set("SupportedArchitectures", answer)
+			continue
+		}
 
 		if strings.HasPrefix(typeField.Type.String(), "[]") {
 			listType := typeField.Type.String()[2:]
@@ -386,6 +414,23 @@ func buildModel(m models.Model, d *schema.ResourceData) (models.Model, error) {
 				return nil, e
 			}
 			valueField.Set(reflect.ValueOf(i))
+			continue
+		}
+		if fieldName == "SupportedArchitectures" {
+			answer := d.Get("SupportedArchitectures").(map[string]interface{})
+
+			valueField.Set(reflect.MakeMap(typeField.Type))
+
+			for k, v := range answer {
+				s := v.(string)
+
+				var i interface{}
+				if e := json.Unmarshal([]byte(s), &i); e != nil {
+					i = s
+				}
+
+				valueField.SetMapIndex(reflect.ValueOf(k), reflect.ValueOf(i))
+			}
 			continue
 		}
 
