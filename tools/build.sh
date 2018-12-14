@@ -53,11 +53,15 @@ oses=("linux" "darwin" "windows")
 for arch in "${arches[@]}"; do
     for os in "${oses[@]}"; do
         (
+            suffix=""
+            if [[ $os == windows ]] ; then
+              suffix=".exe"
+            fi
             export GOOS="$os" GOARCH="$arch"
             echo "Building binaries for ${arch} ${os}"
             binpath="bin/$os/$arch"
             mkdir -p "$binpath"
-            go build -ldflags "$VERFLAGS" -o "$binpath/terraform-provider-drp"
+            go build -ldflags "$VERFLAGS" -o "$binpath/terraform-provider-drp${suffix}"
         )
         done
 done

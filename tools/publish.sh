@@ -14,9 +14,13 @@ for i in terraform ; do
     oses=("linux" "darwin" "windows")
     for arch in "${arches[@]}"; do
         for os in "${oses[@]}"; do
+            suffix=""
+            if [[ $os == windows ]] ; then
+              suffix=".exe"
+            fi
             path="$CONTENT/$version/$arch/$os"
             mkdir -p "rebar-catalog/$path"
-            cp bin/$os/$arch/terraform-provider-drp "rebar-catalog/$path"
+            cp bin/$os/$arch/terraform-provider-drp${suffix} "rebar-catalog/$path"
         done
     done
 done
