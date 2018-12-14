@@ -1,5 +1,5 @@
-hash: fbb0631f4704047e73a80d5e84f0ee991a36dac65301f0e092645ecb31132a25
-updated: 2018-08-02T17:15:26.709247-05:00
+hash: bf9a48f2562d227784ede2b250c23297534d4b52a733dfe4694880b173b729f6
+updated: 2018-12-14T09:20:10.742117-06:00
 imports:
 - name: github.com/aokoli/goutils
   version: 3391d3790d23d03408670993e957e8f408993c34
@@ -71,6 +71,14 @@ imports:
   - utils
 - name: github.com/digitalrebar/store
   version: 63349d4ab20ba3b162635d60d6c3b34c7bb59bd9
+- name: github.com/dsnet/compress
+  version: cc9eb1d7ad760af14e8f918698f745e80377af4f
+  subpackages:
+  - bzip2
+  - bzip2/internal/sais
+  - internal
+  - internal/errors
+  - internal/prefix
 - name: github.com/elithrar/simple-scrypt
   version: 28a8a89db0e1201d1b61b8ee90597fd7d035c0d5
 - name: github.com/ghodss/yaml
@@ -101,6 +109,8 @@ imports:
   - ptypes/any
   - ptypes/duration
   - ptypes/timestamp
+- name: github.com/golang/snappy
+  version: 2e65f85255dbc3072edf28d6b5b8efc472979f5a
 - name: github.com/google/uuid
   version: 064e2069ce9c359c118179501254f67d7d37ba24
 - name: github.com/gorilla/websocket
@@ -201,6 +211,8 @@ imports:
   version: c12348ce28de40eed0136aa2b644d0ee0650e56c
   subpackages:
   - pbutil
+- name: github.com/mholt/archiver
+  version: de0d89e255e17c8d75a40122055763e743ab0593
 - name: github.com/mitchellh/copystructure
   version: d23ffcb85de31694d6ccaa23ccb4a03e55c1303f
 - name: github.com/mitchellh/go-homedir
@@ -213,8 +225,14 @@ imports:
   version: f15292f7a699fcc1a38a80977f80a046874ba8ac
 - name: github.com/mitchellh/reflectwalk
   version: 63d60e9d0dbc60cf9164e6510889b0db6683d98c
+- name: github.com/nwaples/rardecode
+  version: e06696f847aeda6f39a8f0b7cdff193b7690aef6
 - name: github.com/pborman/uuid
   version: c65b2f87fee37d1c7854c9164a450713c28d50cd
+- name: github.com/pierrec/lz4
+  version: 1f6e18d34f6790fc0afea6f13a5fe3d9ab1770af
+  subpackages:
+  - internal/xxh32
 - name: github.com/pin/tftp
   version: d715325c1fc1f1a22a8272a60dc6783a5ab093ba
   subpackages:
@@ -339,8 +357,6 @@ imports:
   - transport
 - name: gopkg.in/go-playground/validator.v8
   version: 5f1438d3fca68893a817e4a66806cea46a9e4ebf
-- name: github.com/mholt/archiver
-  version: de0d89e255e17c8d75a40122055763e743ab0593
 - name: gopkg.in/olahol/melody.v1
   version: d521390733761fe1db13de575c253afd5c743085
 - name: gopkg.in/yaml.v2
