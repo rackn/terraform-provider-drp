@@ -339,6 +339,8 @@ imports:
   - transport
 - name: gopkg.in/go-playground/validator.v8
   version: 5f1438d3fca68893a817e4a66806cea46a9e4ebf
+- name: github.com/mholt/archiver
+  version: de0d89e255e17c8d75a40122055763e743ab0593
 - name: gopkg.in/olahol/melody.v1
   version: d521390733761fe1db13de575c253afd5c743085
 - name: gopkg.in/yaml.v2
