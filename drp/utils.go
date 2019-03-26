@@ -164,6 +164,8 @@ func buildSchemaFromObject(m interface{}, computed bool) map[string]*schema.Sche
 		}
 
 		switch typeField.Type.String() {
+		case "models.Owned", "models.Bundled":
+			// Nothing to do here.
 		case "models.OsInfo":
 			// Singleton struct - encode as a list for now.
 			sm[fieldName] = buildSchemaListFromObject(&models.OsInfo{}, computed)
