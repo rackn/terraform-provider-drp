@@ -1,4 +1,4 @@
-hash: bf9a48f2562d227784ede2b250c23297534d4b52a733dfe4694880b173b729f6
+h93001007af2061aa9cd9a99dbca24d97db6f25eoash: bf9a48f2562d227784ede2b250c23297534d4b52a733dfe4694880b173b729f6
 updated: 2018-12-14T09:20:10.742117-06:00
 imports:
 - name: github.com/aokoli/goutils
@@ -57,8 +57,12 @@ imports:
   version: 043d41e239ca1937c085cb9dc31b5d1a098c1b98
 - name: github.com/digitalrebar/pinger
   version: 4b06d02345cad02a772ff21f13e1ef3551c943d4
+- name: github.com/gofunky/semver
+  version: b182ca44e05aea9918247472dc1cf6658577f423
+- name: github.com/kardianos/osext
+  version: ae77be60afb1dcacde03767a8c37337fad28ac14
 - name: github.com/digitalrebar/provision
-  version: d0570eee303d2a30dc970176808f03d72529620f
+  version: 352f8e29e5c2d03c14bd770d7e27a8568e515489
   subpackages:
   - api
   - backend
@@ -84,15 +88,17 @@ imports:
 - name: github.com/ghodss/yaml
   version: e9ed3c6dfb39bb1a32197cb10d527906fe4da4b6
 - name: github.com/gin-contrib/cors
-  version: 88488351b0df049b2d3d65cab583c6bed894abb2
+  version: 6f0a820f94bea07359ec77c26855ca8cf6762739
+- name: github.com/galthaus/gzip
+  version: cfbca743ba8cc91ec4167e8a6c44626c5fad7288
 - name: github.com/gin-contrib/gzip
   version: 4fbfcc6122759afed2efbc762c4c41164a403951
 - name: github.com/gin-contrib/location
-  version: 3e26b9c1187f298ae3669e41d1b696d256113f66
+  version: 911ef8299476b8a48e11ec0c26f2a0810345b690
 - name: github.com/gin-contrib/sse
   version: 22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae
 - name: github.com/gin-gonic/gin
-  version: 8902826696c1dad024e1c8ba4f903aa61a25c839
+  version: 220e8d34538f5dfdcc299dda79bf83cf52e633f6
   subpackages:
   - binding
   - json
@@ -212,7 +218,7 @@ imports:
   subpackages:
   - pbutil
 - name: github.com/mholt/archiver
-  version: de0d89e255e17c8d75a40122055763e743ab0593
+  version: d572b2e8b82726cee9476d1b9d63a7fe9b601ff1
 - name: github.com/mitchellh/copystructure
   version: d23ffcb85de31694d6ccaa23ccb4a03e55c1303f
 - name: github.com/mitchellh/go-homedir
@@ -265,11 +271,13 @@ imports:
   subpackages:
   - codec
 - name: github.com/ulikunitz/xz
-  version: 0c6b41e72360850ca4f98dc341fd999726ea007f
+  version: 636d36a76670e6c700f22fd5f4588679ff2896c4
   subpackages:
   - internal/hash
   - internal/xlog
   - lzma
+- name: github.com/xi2/xz
+  version: 48954b6210f8d154cb5f8484d3a3e1f83489309e
 - name: github.com/VictorLowther/jsonpatch2
   version: a3386fdb359634d937f41d6f66af3df4d25c5ae4
   subpackages:
@@ -361,4 +369,6 @@ imports:
   version: d521390733761fe1db13de575c253afd5c743085
 - name: gopkg.in/yaml.v2
   version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
+- name: github.com/klauspost/pgzip
+  version: c4ad2ed77aece7b3270909769a30a3fcea262a66
 testImports: []
