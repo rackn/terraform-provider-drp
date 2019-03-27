@@ -371,4 +371,6 @@ imports:
   version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
 - name: github.com/klauspost/pgzip
   version: c4ad2ed77aece7b3270909769a30a3fcea262a66
+- name: github.com/fsnotify/fsnotify
+  version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
 testImports: []
