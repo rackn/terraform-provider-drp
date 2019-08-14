@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/digitalrebar/provision/models"
+	"github.com/digitalrebar/provision/v4/models"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )

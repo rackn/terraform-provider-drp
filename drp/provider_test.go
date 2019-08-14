@@ -7,11 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digitalrebar/provision/api"
-	"github.com/digitalrebar/provision/server"
+	"github.com/digitalrebar/provision/v4/api"
+	"github.com/digitalrebar/provision/v4/test"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	flags "github.com/jessevdk/go-flags"
 )
 
 var testAccDrpProviders map[string]terraform.ResourceProvider
@@ -42,21 +41,6 @@ func testAccDrpPreCheck(t *testing.T) {
 var tmpDir string
 var session *api.Client
 
-func generateArgs(args []string) *server.ProgOpts {
-	var c_opts server.ProgOpts
-
-	parser := flags.NewParser(&c_opts, flags.Default)
-	if _, err := parser.ParseArgs(args); err != nil {
-		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
-			os.Exit(0)
-		} else {
-			os.Exit(1)
-		}
-	}
-
-	return &c_opts
-}
-
 func TestMain(m *testing.M) {
 	var err error
 	tmpDir, err = ioutil.TempDir("", "tf-")
@@ -65,34 +49,11 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	testArgs := []string{
-		"--base-root", tmpDir,
-		"--tls-key", tmpDir + "/server.key",
-		"--tls-cert", tmpDir + "/server.crt",
-		"--api-port", "10031",
-		"--static-port", "10032",
-		"--tftp-port", "10033",
-		"--dhcp-port", "10034",
-		"--binl-port", "10035",
-		"--metrics-port", "10036",
-		"--fake-pinger",
-		"--drp-id", "Fred",
-		"--backend", "memory:///",
-		"--debug-frontend", "0",
-		"--debug-renderer", "0",
-		"--debug-plugins", "0",
-		"--local-content", "",
-		"--default-content", "",
-	}
-
-	err = os.MkdirAll(tmpDir+"/plugins", 0755)
-	if err != nil {
-		log.Printf("Error creating required directory %s: %v", tmpDir+"/plugins", err)
+	if err := test.StartServer(tmpDir, 10031); err != nil {
+		log.Printf("Error starting dr-provision: %v", err)
+		os.RemoveAll(tmpDir)
 		os.Exit(1)
 	}
-
-	c_opts := generateArgs(testArgs)
-	go server.Server(c_opts)
 
 	count := 0
 	for count < 30 {
@@ -105,15 +66,18 @@ func TestMain(m *testing.M) {
 	}
 	if session == nil {
 		log.Printf("Failed to create UserSession: %v", err)
+		test.StopServer()
 		os.RemoveAll(tmpDir)
 		os.Exit(1)
 	}
 	if err != nil {
 		log.Printf("Server failed to start in time allowed")
+		test.StopServer()
 		os.RemoveAll(tmpDir)
 		os.Exit(1)
 	}
 	ret := m.Run()
+	test.StopServer()
 	os.RemoveAll(tmpDir)
 	os.Exit(ret)
 }

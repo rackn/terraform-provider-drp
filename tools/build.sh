@@ -2,12 +2,6 @@
 
 set -e
 
-[[ $GOPATH ]] || export GOPATH="$HOME/go"
-fgrep -q "$GOPATH/bin" <<< "$PATH" || export PATH="$PATH:$GOPATH/bin"
-
-[[ -d "$GOPATH/src/github.com/rackn/terraform-provider-drp" ]] || go get github.com/rackn/terraform-provider-drp
-
-cd "$GOPATH/src/github.com/rackn/terraform-provider-drp"
 if ! which go &>/dev/null; then
         echo "Must have go installed"
         exit 255
@@ -15,7 +9,7 @@ fi
 
 # Work out the GO version we are working with:
 GO_VERSION=$(go version | awk '{ print $3 }' | sed 's/go//')
-WANTED_VER=(1 8)
+WANTED_VER=(1 12)
 if ! [[ "$GO_VERSION" =~ ([0-9]+)\.([0-9]+) ]]; then
     echo "Cannot figure out what version of Go is installed"
     exit 1
@@ -24,17 +18,7 @@ elif ! (( ${BASH_REMATCH[1]} > ${WANTED_VER[0]} || ${BASH_REMATCH[2]} >= ${WANTE
     exit -1
 fi
 
-for tool in glide; do
-    which "$tool" &>/dev/null && continue
-    case $tool in
-        glide)
-            go get -v github.com/Masterminds/glide
-            (cd "$GOPATH/src/github.com/Masterminds/glide" && git checkout tags/v0.12.3 && go install);;
-        *) echo "Don't know how to install $tool"; exit 1;;
-    esac
-done
-
-glide install
+export GO111MODULE=on
 
 . tools/version.sh
 

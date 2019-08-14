@@ -5,7 +5,7 @@ import (
 	"net"
 	"testing"
 
-	"github.com/digitalrebar/provision/models"
+	"github.com/digitalrebar/provision/v4/models"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
