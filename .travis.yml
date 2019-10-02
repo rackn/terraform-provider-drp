@@ -16,7 +16,9 @@ install:
 - ./tools/build.sh
 - ./tools/package.sh
 - ./tools/publish.sh
+- ./tools/test-setup.sh
 script:
+- export PATH="$PWD/tools/build:$PATH"
 - export GO111MODULE=on
 - make test
 - make testacc
