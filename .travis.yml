@@ -7,7 +7,7 @@ addons:
     - p7zip-full
 sudo: false
 go:
-- '1.12'
+- '1.10'
 git:
   depth: 500
 install:
@@ -27,7 +27,6 @@ deploy:
   file:
   - bin/darwin/amd64/terraform-provider-drp_${TRAVIS_TAG}_darwin_amd64.zip
   - bin/linux/amd64/terraform-provider-drp_${TRAVIS_TAG}_linux_amd64.zip
-  - bin/windows/amd64/terraform-provider-drp_${TRAVIS_TAG}_windows_amd64.zip
   skip_cleanup: true
   on:
     repo: form3tech-oss/terraform-provider-drp
