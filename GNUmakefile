@@ -3,12 +3,15 @@ GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
 PKG_NAME=drp
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 
-default: build
+default: build package
 
 build: fmtcheck
 	go get github.com/kardianos/govendor
 	tools/build.sh
 	go install
+
+package:
+	tools/package.sh
 
 test: fmtcheck
 	go test -i $(TEST) || exit 1
