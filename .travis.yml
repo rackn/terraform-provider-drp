@@ -7,45 +7,31 @@ addons:
     - p7zip-full
 sudo: false
 go:
-- "1.10"
+- '1.12'
 git:
   depth: 500
 install:
 - go get github.com/kardianos/govendor
-- ./tools/build.sh
-- ./tools/package.sh
-- ./tools/publish.sh
+- "./tools/build.sh"
+- "./tools/package.sh"
 script:
 - make test
 - make testacc
 - make vendor-status
 - make vet
-after_success:
-- bash <(curl -s https://codecov.io/bash) -t 6259c706-5c1d-471f-b62b-4f908ea1801d
-notifications:
-  slack:
-    secure: Imuptg78FWWZlGVb8LBuwn45CeMfnHgf+pXbftR8mSGFRsg08jw38MIRtw/MAET3RJsciwDXf22AkgM8WgZ+fcUbJI4MGn2IvnM40T/imc5deqlMn1QdE5HasWrrBwfyY7hDu8XBexit+2fmYLGGrHX2fsbvUJepT4xOV8MZbZWMYueoBuL2bxNRR+lhjqVsKMq+/8q4g7hsKxYOdStEOZQIM13qI8dbIIQK4cCPQGtdNMGlNSX0a/nEFZmxDKh3WILssZcRst7SW3QldYppJO21PcTmY/zCTLJ5b7izweLczDmV77ckv61X50B8iaarhwEMFYs9Icg8U69mAkbqeU5HsWy1d2VDPDG+QW32VMTU371pVEzsmBVzArSXvldULmRzYcA+9LoYb5P6LNbq2y7tdimETOElbkMyw53hnb4ZPiypLWlwusZibCxGsJMp41MgbxxaMKxUgrBsAY9nSBg/oj7ixditveXm5IjqBJXfFyxuxfvcxssT15AiqFI3z+Mpoarq233V7E/c0AwdYc/iJKPtW8DG2uSjb0EMIKopXjEi/tz8ykVQH1UbKww5PvGfzCw2mCNF+Bc925coTs8gwaU+XOnqQesggUheAmpaQhbdPGpNYecbLgtQ3kafEBllTrgLyTqISkXlDMZybItP1C8GrEEshGWSEzBAEGU=
 deploy:
 - provider: releases
   overwrite: true
   api_key:
-    secure: uKwH4f/tv36GkcwTvLfrO4AxwQ5CmOHZRhmi1rOLp3bABMsLumtXmsw204w4v6vLB/NA6+Dgp/oIMfnlvTK/aktaEBxYDWG5UIgeTdISvjvwGG2+lEehO7aC1JOwW4jPe9OOqkuhIDuQQeCWfzzRCd0zAtKS426cwMnsvY52AMm9cJdTGSznRbDn1guE5Fjt9YbIClyXHHJ38hlQMq2Rb/dqwjAprtJtHwW0h11Wu+8+dkyf1LjnFq9TOki1iiDBKakgoK+sxsnR57/IEdMZK/BhotkvpdlNyjwJusZbTZ/2F6orsXuqgEkoqYVSgea5Ce01BiA6Jm7VbFRBY41wMpsQDB12zY/58Lc0tfFY0hV+trl/FpPn6y8utVjzQ++rffsk/6tUiFEQnCAHVbYhO16fqY3yBmJeZNhVY5mO30cR0Hf5dUKJjaLBjwfNTxvfjV0BeHDR1qY7XMLgWZYeEtCwQXp0p4BGTd0T83t8X6qnoiA0z4Ys81aWV0dCZlmKveJVvPqaaSASzxje2o6d7u5QmgmiJOblk99NMqeqxsTiRReZZf+LtlVMHmTxa7fi1tfuL8chCVVG2QcTimNRWH3xl2RwTqdypAqTcuwNWtpynb/qtJX5WogXSQZFW6GEEdaB8rd+JF/s03pJ9GeGJah8hn7QbniPNx5B7t+NLCg=
+    secure: "${GITHUB_TOKEN}"
   file:
-  - terraform-provider-drp.zip
-  - terraform-provider-drp.sha256
+  - bin/darwin/amd64/terraform-provider-drp_${TRAVIS_TAG}_darwin_amd64.zip
+  - bin/linux/amd64/terraform-provider-drp_${TRAVIS_TAG}_linux_amd64.zip
+  - bin/windows/amd64/terraform-provider-drp_${TRAVIS_TAG}_windows_amd64.zip
   skip_cleanup: true
   on:
-    repo: rackn/terraform-provider-drp
+    repo: form3tech-oss/terraform-provider-drp
     tags: true
-- provider: s3
-  access_key_id: AKIAJY25W4N3CA7NRHJQ
-  secret_access_key:
-    secure: rnqO8erYlMIUFPYmw0QHZtCxlx5R9IODVYELb8sQ35WfCRz2nv1AfJzGb3fCdNRlTiphbRAamOo9lSVdd5/n7Qt9ZKIc9YhR8m9i4+elM3mIqqNrbLBRLMSDYakSo7ODbsZkkmcQGhRlpwgwk7ANCXhDhmDYTPkOLB/ZiT79kQdoKcVS93WBXOMurDYtjLViDTcsZSserMeErkEGQLcVBNwSb1BJPhAAwskuUtxmKI0NJ5LgiOnaAaQRud0E0IRs3iTy1dMCTfhSVD7o2uBrzcx2xfI7y3ct/tmrnlU4rpFp5LrKo05vOGHKeQkwvFrPWDXqYSXSGxmyaL8uk1V31zh+Xd6ph31e4AOMEo+6h4HR9rXSwf7Rp11fPj2whyhPPvbyipI3mo6R/ZzUpOgVbPVJxq4AHwQsQZTM4YjIc7xG3SQdVBZvERsQ5TgPuBx4CHOXgzhkjdneUKqC6bCJ1cJDZvel99HEmcxYjehBDuhWk4H6AguHEVs5QQfmCujNUnkBkwPOVZ225Tk/anZCnv9UUkAQShgZ8cRSrr9jEtPyxFoTjobJsuSWw0tdyQfyPj+2vd6B9gSDt9om6F5Hd+y8An6i2r0fO1RvdoZrV0uf8enTCqrbbD+8fob8NRufhXBi6N2cWuFy61qMFOpG8T2k6q3lpAqzRizGJDMST9Q=
-  bucket: rebar-catalog
-  region: us-west-2
-  local-dir: rebar-catalog
-  acl: public_read
-  skip_cleanup: true
-  on:
-    repo: rackn/terraform-provider-drp
-    tags: true
+env:
+  global:
+    secure: kWANtpnEXnP8G96Y9oHTwR2vc3wayn8F92ToqdK/wa7VvE7T04CXn5L32EK1Xb9qsdqPIf51CgofMhiyLugJAYbgmaSO+YOhkE88VOOn/yJSU/S8pGLbotFLBIVESog2l78ViXRSOloJILSp2oxdsCWHx7Vr0CzejMO/eTAfJJ9NTyRF/GutaS5Jbc1V53AgHh1GzXP/1vDCgFyyESK+Xv0GAO6MGgxfgvkqRr6vt3oTi43wDWAV2lvVynQ5eXSqYyHJ0Kt10ppqVAOGlgyL3ZxkgAmZTR4s3w5Dbk57GNyzN7Hfp0tVzgTWTQhLO9mRZL38YJOS6FFLbQWZvabhc6Hkkge64QKlgAYiUYWgLKrpfXr7UB4+WAtmTNJlhytXLKjqsUeWfwE5M+BYGA9/4Cc/hxDatOlOjG+2SN4JqMm62P7i+SfDDAZQUDY7sPrP/G9vWAhAUNBEH0MVRetPTyxmizuXYzS1kUZ+JavlxMuX2puzES5Fh4lSHhM4eFQAK5nkqydB7Gygps12SgI2AKqroUyqadTgD/z+RLyufFZr6bVyvpHIjXXymLSsFbbsgT+casLxJXV7I1PzVRS+sKl0D2JYHQrWjgrUcmEh4gZsX1TSQOo6t9MF9qP/aN/cI2e9yTBWc7hDzkZQhvzuOg05LNKIFOOqHHWQtth4iiI=
