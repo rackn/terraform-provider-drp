@@ -2,30 +2,30 @@ language: go
 addons:
   apt:
     packages:
-      - sshpass
-      - bsdtar
-      - p7zip-full
+    - sshpass
+    - bsdtar
+    - p7zip-full
 sudo: false
 go:
-  - "1.13"
+- '1.13'
 git:
   depth: 500
 install:
-  - go get github.com/kardianos/govendor
+- go get github.com/kardianos/govendor
 script:
-  - make
+- make
 deploy:
-  - provider: releases
-    overwrite: true
-    api_key:
-      secure: "${GITHUB_TOKEN}"
-    file:
-      - bin/darwin/amd64/terraform-provider-drp_${TRAVIS_TAG}_darwin_amd64.zip
-      - bin/linux/amd64/terraform-provider-drp_${TRAVIS_TAG}_linux_amd64.zip
-    skip_cleanup: true
-    on:
-      repo: form3tech-oss/terraform-provider-drp
-      tags: true
+- provider: releases
+  overwrite: true
+  api_key:
+    secure: "$GITHUB_TOKEN"
+  file:
+  - bin/darwin/amd64/terraform-provider-drp_${TRAVIS_TAG}_darwin_amd64.zip
+  - bin/linux/amd64/terraform-provider-drp_${TRAVIS_TAG}_linux_amd64.zip
+  skip_cleanup: true
+  on:
+    repo: form3tech-oss/terraform-provider-drp
+    tags: true
 env:
   global:
-    secure: kWANtpnEXnP8G96Y9oHTwR2vc3wayn8F92ToqdK/wa7VvE7T04CXn5L32EK1Xb9qsdqPIf51CgofMhiyLugJAYbgmaSO+YOhkE88VOOn/yJSU/S8pGLbotFLBIVESog2l78ViXRSOloJILSp2oxdsCWHx7Vr0CzejMO/eTAfJJ9NTyRF/GutaS5Jbc1V53AgHh1GzXP/1vDCgFyyESK+Xv0GAO6MGgxfgvkqRr6vt3oTi43wDWAV2lvVynQ5eXSqYyHJ0Kt10ppqVAOGlgyL3ZxkgAmZTR4s3w5Dbk57GNyzN7Hfp0tVzgTWTQhLO9mRZL38YJOS6FFLbQWZvabhc6Hkkge64QKlgAYiUYWgLKrpfXr7UB4+WAtmTNJlhytXLKjqsUeWfwE5M+BYGA9/4Cc/hxDatOlOjG+2SN4JqMm62P7i+SfDDAZQUDY7sPrP/G9vWAhAUNBEH0MVRetPTyxmizuXYzS1kUZ+JavlxMuX2puzES5Fh4lSHhM4eFQAK5nkqydB7Gygps12SgI2AKqroUyqadTgD/z+RLyufFZr6bVyvpHIjXXymLSsFbbsgT+casLxJXV7I1PzVRS+sKl0D2JYHQrWjgrUcmEh4gZsX1TSQOo6t9MF9qP/aN/cI2e9yTBWc7hDzkZQhvzuOg05LNKIFOOqHHWQtth4iiI=
+    secure: Kpdzou5drOIn75TW1c7wg5lu4vPEReAf3jaLZYKDUESXkFo916wL9qnKrQUtZ75iq27UZB1TKpsN0x8o0JtLwvPZBJylsFkwS5SyUv/EKYRDCh8ODDOGeBqJ+RHJjN5Tl4oNR17ylSD2zuYlKGi1fOtcBa1iC6SdbqhVHYhTqVTqrc0u0GkH6V5H0upsTmKfYg6LcoU5zQZ/R24HRLbGZ2oUyjPfH2UIZoji7hGedKr2qrMpSFrPEz+IjFd/7HbZm/nUro/h1N1p0U0usdIK6jAuRjnw7cEqwyAuc6PFdER2dnCq6krtI1AIZ6ird/1ZARMNqR0u0qls709/St5YjfkHrMwd40jN0Tw/dZanPCJWOi1ZPYJMKLVa4P9QUq02hUJXBCCyDE7vNWODNhHzR22edjkdFqrKXjG/S3ivcHYC3+V7kiT6kQf8rjgtmhgm4WpcqKbuUuJCXzHgoDG5QthzLUE+JVjJ80Y+q9CRMIoVz9mhFRhBvl/UsyupiCGPdHpEVCDTpDZpvpEtQl3SU9A+DcnN9mYLv/sn9HeBc09oRPW4fMSVHfvGCTQWxtvCRPgew3gJ9Av4VBTIgY7D+vg63y68MPBmq+bbR6nYMWDqS1K6PTpKFyzjnyZN+QPyQ8FfGvYCzxIWxZpgUm+vKD5kWHqxeDDkTbERGack8oQ=
