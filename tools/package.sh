@@ -2,29 +2,10 @@
 
 set -e
 
-case $(uname -s) in
-    Darwin)
-        shasum="command shasum -a 256";;
-    Linux)
-        shasum="command sha256sum";;
-    *)
-        # Someday, support installing on Windows.  Service creation could be tricky.
-        echo "No idea how to check sha256sums"
-        exit 1;;
-esac
+VERSION=$(echo $TRAVIS_TAG | sed 's/v//g')
 
-. tools/version.sh
+BINARY="bin/darwin/amd64/terraform-provider-drp"
+zip "${BINARY}_${VERSION}_darwin_amd64.zip" "${BINARY}"
 
-version="$Prepart$MajorV.$MinorV.$PatchV$Extra-$GITHASH"
-
-tmpdir="$(mktemp -d /tmp/rs-bundle-XXXXXXXX)"
-cp -a bin "$tmpdir"
-(
-    cd "$tmpdir"
-    $shasum $(find . -type f) >sha256sums
-    zip -p -r terraform-provider-drp.zip *
-)
-cp "$tmpdir/terraform-provider-drp.zip" .
-$shasum terraform-provider-drp.zip > terraform-provider-drp.sha256
-rm -rf "$tmpdir"
-
+BINARY="bin/linux/amd64/terraform-provider-drp"
+zip "${BINARY}_${VERSION}_linux_amd64.zip" "${BINARY}"
