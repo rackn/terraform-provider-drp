@@ -1,0 +1,63 @@
+# RackN 2020
+# Digital Rebar v4.4+ Terraform v0.13+ Provider
+
+terraform {
+  required_version = ">= 0.13.0"
+  required_providers {
+    drp = {
+      versions = ["2.0.0"]
+      source = "extras.rackn.io/rackn/drp"
+    }
+  }
+}
+
+provider "drp" {
+  user     = "rocketskates"
+  password = "r0cketsk8ts"
+  endpoint = "https://127.0.0.1:8092"
+  # token  = will read from RS_TOKEN if set
+  # key    = will read from RS_KEY if set
+}
+
+resource "drp_machine" "one_random_node" {
+
+  # Required values
+  # there are none!
+
+  # Settable values
+  # pool = name of an existing DRP pool (defaults to "default")
+  # timeout = time string for max wait time (default to 5m)
+  # 
+  # List of public SSH keys to be installed (written as Param.access-keys)
+  # authorized_keys = ["ssh key"]
+  # 
+  # List of profiles to apply to node (must already exist)
+  # add_profiles = ["mandy", "clause"]
+  #
+  # list of parameters to set with their string value forms
+  # add_parameters = ["param1: value1", "param2: value2"]
+  #
+  # list of filters to reduce the nodes to draw from.
+  # follows the Digital Rebar CLI command line pattern
+  # filters = ["filter1=value1","filter2=value2"]
+  #
+  # Returned values
+  # name = machine name
+  # address = machine address
+  # status = machine status (typically "InUse")
+}
+
+output "machine_ip" {
+  value       = drp_machine.one_random_node.address
+  description = "Machine.Address (the Machine's primary IP)"
+}
+
+output "machine_id" {
+  value       = drp_machine.one_random_node.id
+  description = "Machine.Uuid"
+}
+
+output "machine_name" {
+  value       = drp_machine.one_random_node.name
+  description = "Machine.Name"
+}
