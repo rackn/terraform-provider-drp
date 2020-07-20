@@ -10,7 +10,7 @@ NOTE: For new users, you should use the release managed binaries from https://gi
 NOT Documentation!
 ------------------
 
-This page is about building, NOT about using, the provider!  DRP Terraform Provider documentation is maintained with the project integrations documentation, please see https://provision.readthedocs.io/en/tip/doc/integrations/terraform.html
+This page is about building, NOT about using, the provider!  DRP Terraform Provider documentation is maintained with the project integrations documentation, please see https://provision.readthedocs.io/en/latest/doc/content-packages/terraform.html
 
 Build Requirements
 ------------------
