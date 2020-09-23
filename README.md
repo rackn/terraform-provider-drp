@@ -1,9 +1,9 @@
-Terraform Provider
-==================
+Terraform Provider for Digital Rebar v4.4+
+==========================================
 
 - Hashicorp Website: https://www.terraform.io
 - RackN Website: https://rackn.com
-- Digital Rebar Community:  http://rebar.digital
+- Digital Rebar (DRP) Community:  http://rebar.digital
 
 NOTE: For new users, you should use the release managed binaries from https://github.com/rackn/terraform-provider-drp/releases.
 
@@ -15,8 +15,8 @@ This page is about building, NOT about using, the provider!  DRP Terraform Provi
 Build Requirements
 ------------------
 
--	[Terraform](https://www.terraform.io/downloads.html) 0.11.x
--	[Go](https://golang.org/doc/install) 1.10 (to build the provider plugin)
+-	[Terraform](https://www.terraform.io/downloads.html) 0.12.x
+-	[Go](https://golang.org/doc/install) 1.13 (to build the provider plugin)
 -	Digital Rebar terraform/[params] in system (can be imported from RackN content)
 
 Building The Provider
@@ -36,22 +36,31 @@ $ cd $GOPATH/src/github.com/rackn/terraform-provider-drp
 $ make build
 ```
 
+Running The Provider (v0.13+)
+---------------------
+
+v0.13+ requres use of the required_providers stanza
+Update for your OS and architecture!
+
+```sh
+$ mkdir -p .terraform/plugins/rackn/drp/2.0/linux_amd64
+$ ln -s bin/linux/amd64/terraform-provider-drp .terraform/plugins/extras.rackn.io/rackn/drp/2.0.0/linux_amd64
+```
+
 Requirements for the Digital Rebar Provision (DRP) provider
 -----------------------------------------------------------
 
 DRP Terraform Provider documentation is maintained with the project integrations documentation, please see https://provision.readthedocs.io/en/tip/doc/integrations/terraform.html
 
-The DRP Terraform Provider uses a pair of Machine Parameters to create an inventory pool. Only machines with these parameters will be available to the provider.
+The DRP Terraform Provider uses the DRP v4.4+ Pooling API to allocate and release
+machines from pools.
 
-The terraform/managed parameter determines the basic inventory availability. This flag must be set to true for Terraform to find machines.
+By design, the only limited state is exposed via this provider.  This prevents Terraform state from overriding or changing DRP machine information.
 
-The terraform/allocated parameter determines when machines have been assigned to a Terraform plan. When true, the machine is now being managed by Terraform. When false, the machine is available for allocation.
+The Terraform Provider update interactions are limited to the allocation/release methods.
 
-The terraform/pool parameter allows operators to create groups of machines that can be managed separately.  It should have a default value of `default`.
-
-Using the RackN terraform-ready stage will automatically set these three parameters.
-
-The Terraform Provider can read additional fields when requesting inventory. In this way, users can request machines with specific characteristics.
+The Terraform Provider can read additional fields ("computed" valutes) when requesting inventory. In this way, users find additional characteristics; however, these are
+added to the provider carefully.
 
 Developing the Provider
 -----------------------

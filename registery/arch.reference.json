@@ -1,0 +1,20 @@
+{
+  "protocols": ["5.0", "5.1"],
+  "os": "REPLACE",
+  "arch": "REPLACE",
+  "filename": "REPLACE",
+  "download_url": "https://extras.rackn.io/rackn/drp/REPLACE",
+  "shasums_url": "https://extras.rackn.io/rackn/drp/REPLACE",
+  "shasums_signature_url": "https://extras.rackn.io/rackn/drp/REPLACE",
+  "signing_keys": {
+    "gpg_public_keys": [
+      {
+        "key_id": "REPLACE",
+        "ascii_armor": "REPLACE",
+        "trust_signature": "",
+        "source": "RackN",
+        "source_url": "https://www.rackn.com"
+      }
+    ]
+  }
+}
