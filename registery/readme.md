@@ -7,6 +7,7 @@ This directory contains artificats use to populate that repository and maintain 
 
 Currently, RackN is maintaining this repository under https://extras.rackn.io
 
+
 Artifacts
 =========
 
@@ -42,6 +43,12 @@ path and file is `/rackn/drp/2.0.0/linux/amd64` where the json file is named `am
 
 Reference is `arch.reference`
 
+zip with binaries
+------------------
+
+_required_
+
+The binaries from the terraform provider (one per os and arch) are referenced from teh arch.reference file.
 
 Build.sh
 ========
@@ -54,3 +61,12 @@ This includes:
 * signing the signatures with GPG and attaching the public key (you need to setup gpg)
 
 At the end, it invalidates the cloudfront cache.
+
+Prerequistes
+------------
+
+First, you must be able to run `aws` cli from the command line.  The script assumes that you've cached credentials for the extras.rackn.io S3 bucket.  Obviously, this is only available for RackN personelle.
+
+Second, you must have installed `gpg` and generated a gpg key pair.  See https://docs.github.com/en/github/authenticating-to-github/generating-a-new-gpg-key for instructions.  The script will then use the gpg private key to encrypt the checksum file.  The public key is embedded in the script for decryption.
+
+Note: registering the key may be required - I'm not certain at this time.
