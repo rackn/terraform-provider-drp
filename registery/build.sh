@@ -38,7 +38,7 @@ for os in $OS; do
 		echo $(sha256sum  "${filename}.zip") > "${filename}_SHA256SUMS"
 		echo "${filename}_SHA256SUMS" >> .gitignore
 
-		echo "  gpg signature of SHA to ${filename}_SHA256SUMS.sig"	
+		echo "  gpg signature of SHA to ${filename}_SHA256SUMS.sig"
 		gpg --detach-sign -r info@rackn.com --output ${filename}_SHA256SUMS.sig ${filename}_SHA256SUMS
 		echo "${filename}_SHA256SUMS.sig" >> .gitignore
 
@@ -70,7 +70,7 @@ for os in $OS; do
 		aws s3 cp "${filename}_SHA256SUMS" s3://extras.rackn.io/rackn/drp/${filename}_SHA256SUMS --acl public-read
 		aws s3 cp "${filename}_SHA256SUMS.sig" s3://extras.rackn.io/rackn/drp/${filename}_SHA256SUMS.sig --acl public-read
 
-		rm key.asc		
+		rm key.asc
 	done
 done
 
