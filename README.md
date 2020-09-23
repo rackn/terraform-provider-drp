@@ -91,3 +91,9 @@ In order to run the full suite of Acceptance tests, run `make testacc`.
 $ ulimit -n 2560 # for MACs
 $ make testacc
 ```
+
+
+To create and upload the 3rd party registery
+=============================================
+
+See registery/readme.md
