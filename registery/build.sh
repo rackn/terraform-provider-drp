@@ -27,11 +27,14 @@ for os in $OS; do
 	for arch in $ARCH; do
 		filename="${NAME}_${VER}_${os}_${arch}"
 		echo "=== $filename ==="
+		rm ${filename}
 		rm ${filename}.zip
+		rm ${filename}_SHA256SUMS
 		rm ${filename}_SHA256SUMS.sig
 
 		echo "  building zip"
-		zip ${filename}.zip ../bin/${os}/${arch}/$NAME -9 -u -D -j
+		zip ${filename}.zip ../bin/${os}/${arch}/$NAME -9 -D -j
+		zip ${filename}.zip ../bin/${os}/${arch}/$NAME.exe -9 -D -j
 		echo "${filename}.zip" >> .gitignore
 
 		echo "  writing sha256sum to ${os}_${arch}_SHA256SUMS"
