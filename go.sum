@@ -142,6 +142,8 @@ github.com/digitalrebar/logger v0.3.0 h1:7/XP3BQiWfl1Lqmm7tvkvdwjPilDUUPC/iWbeWO
 github.com/digitalrebar/logger v0.3.0/go.mod h1:zH2t4FBhzVxZJTg+eaPzNCRL50nlcRLxWurfTsl5jWE=
 github.com/digitalrebar/provision/v4 v4.5.0-beta01 h1:8iOrRdghe01SrOdckCm5MBah/s8Nijp1LNb45+Zl6ic=
 github.com/digitalrebar/provision/v4 v4.5.0-beta01/go.mod h1:6RVCvHA0zLLX+H0ykzoo4maLhSQ1LYHkR/wZcfO46Us=
+github.com/digitalrebar/provision/v4 v4.5.0 h1:o9lx4DR0OEkAbz2TfLu+EqPYrqlTu8erHkNDgEHCTPg=
+github.com/digitalrebar/provision/v4 v4.5.0/go.mod h1:6RVCvHA0zLLX+H0ykzoo4maLhSQ1LYHkR/wZcfO46Us=
 github.com/digitalrebar/tftp v2.1.0+incompatible/go.mod h1:k1tcsyQwHE72oTU5sfXPJdOCHFiZUt3M2BdYdHsfw6c=
 github.com/digitalrebar/tftp/v3 v3.0.0/go.mod h1:OEQX1RPK9eiehWKXeZMbYiRLJ3JJLaB68vj7IR7LvOM=
 github.com/dimchansky/utfbom v1.1.0/go.mod h1:rO41eb7gLfo8SF1jd9F8HplJm1Fewwi4mQvIirEdv+8=

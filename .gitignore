@@ -5,3 +5,6 @@ terraform.tfstate
 terraform.tfstate.backup
 main.tf
 crash.log
+rebar-catalog
+terraform-provider-drp.sha256
+terraform-provider-drp.zip
