@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/digitalrebar/provision/v4/models"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/pborman/uuid"
+	"gitlab.com/rackn/provision/v4/models"
 )
 
 var testAccDrpMachine_basic = `

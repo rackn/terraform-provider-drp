@@ -5,7 +5,7 @@ Terraform Provider for Digital Rebar v4.4+
 - RackN Website: https://rackn.com
 - Digital Rebar (DRP) Community:  http://rebar.digital
 
-NOTE: For new users, you should use the release managed binaries from https://github.com/rackn/terraform-provider-drp/releases.
+NOTE: For new users, you should use the release managed binaries from https://gitlab.com/rackn/terraform-provider-drp/releases.
 
 NOT Documentation!
 ------------------
@@ -23,17 +23,17 @@ Build Requirements
 Building The Provider
 ---------------------
 
-Clone repository to: `$GOPATH/src/github.com/rackn/terraform-provider-drp`
+Clone repository to: `$GOPATH/src/gitlab.com/rackn/terraform-provider-drp`
 
 ```sh
-$ mkdir -p $GOPATH/src/github.com/rackn; cd $GOPATH/src/github.com/rackn
-$ git clone git@github.com:rackn/terraform-provider-drp
+$ mkdir -p $GOPATH/src/gitlab.com/rackn; cd $GOPATH/src/gitlab.com/rackn
+$ git clone git@gitlab.com:rackn/terraform-provider-drp
 ```
 
 Enter the provider directory and build the provider
 
 ```sh
-$ cd $GOPATH/src/github.com/rackn/terraform-provider-drp
+$ cd $GOPATH/src/gitlab.com/rackn/terraform-provider-drp
 $ make build
 ```
 

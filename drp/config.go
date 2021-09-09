@@ -3,7 +3,7 @@ package drp
 import (
 	"log"
 
-	"github.com/digitalrebar/provision/v4/api"
+	"gitlab.com/rackn/provision/v4/api"
 )
 
 type Config struct {

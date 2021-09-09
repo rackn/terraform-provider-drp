@@ -1,0 +1,32 @@
+image: rackngo1.16
+
+variables:
+  REPO_NAME: gitlab.com/rackn/terraform-provider-drp
+
+stages:
+  - test
+  - deploy
+  - trigger
+
+test:
+  stage: test
+  script:
+    - go get github.com/kardianos/govendor
+    - "./tools/build.sh"
+    - "./tools/package.sh"
+    - "./tools/publish.sh"
+    - make test
+    - make testacc
+    - make vendor-status
+    - make vet
+  artifacts:
+    paths:
+      - rebar-catalog/
+
+deploy:
+  stage: deploy
+  needs: ["test"]
+  script:
+    - aws s3 cp rebar-catalog/ s3://rebar-catalog --recursive --acl public-read
+  only:
+    - tags
