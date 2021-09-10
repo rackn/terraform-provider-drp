@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digitalrebar/provision/v4/api"
-	"github.com/digitalrebar/provision/v4/test"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
+	"gitlab.com/rackn/provision/v4/api"
+	"gitlab.com/rackn/provision/v4/test"
 )
 
 var testAccDrpProviders map[string]terraform.ResourceProvider

@@ -5,9 +5,9 @@ import (
 	"net"
 	"testing"
 
-	"github.com/digitalrebar/provision/v4/models"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"gitlab.com/rackn/provision/v4/models"
 )
 
 var testAccDrpSubnet_basic = `

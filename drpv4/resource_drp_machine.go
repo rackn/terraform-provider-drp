@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/digitalrebar/provision/v4/models"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"gitlab.com/rackn/provision/v4/models"
 )
 
 func resourceMachine() *schema.Resource {

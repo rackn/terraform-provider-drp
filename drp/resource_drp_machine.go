@@ -6,9 +6,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/digitalrebar/provision/v4/models"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
+	"gitlab.com/rackn/provision/v4/models"
 )
 
 func dataSourceMachine() *schema.Resource {
