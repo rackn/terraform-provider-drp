@@ -1,4 +1,7 @@
-image: rackngo1.16
+default:
+  image: registry.gitlab.com/rackn/containers/rackngo:stable
+  tags:
+    - gostable
 
 variables:
   REPO_NAME: gitlab.com/rackn/terraform-provider-drp
