@@ -30,6 +30,22 @@ func resourceMachine() *schema.Resource {
 				ForceNew:    true,
 				Optional:    true,
 			},
+			// sets/overrides pool allocation workflow
+			"allocate_workflow": &schema.Schema{
+				Type:        schema.TypeString,
+				Default:     "",
+				Description: "Workflow to run when the machine is allocated from the pool",
+				ForceNew:    true,
+				Optional:    true,
+			},
+			// sets/overrides pool allocation workflow
+			"deallocate_workflow": &schema.Schema{
+				Type:        schema.TypeString,
+				Default:     "",
+				Description: "Workflow to run when the machine is released back to the pool",
+				ForceNew:    true,
+				Optional:    true,
+			},
 			"timeout": &schema.Schema{
 				Type:        schema.TypeString,
 				Default:     "5m",
@@ -119,6 +135,10 @@ func resourceMachineAllocate(d *schema.ResourceData, m interface{}) error {
 	parms := map[string]interface{}{
 		"pool/wait-timeout": timeout,
 	}
+	pwf := d.Get("allocate_workflow").(string)
+	if pwf != "" {
+		parms["pool/workflow"] = pwf
+	}
 	d.Set("timeout", timeout)
 
 	if profiles, ok := d.GetOk("add_profiles"); ok {
@@ -149,10 +169,14 @@ func resourceMachineAllocate(d *schema.ResourceData, m interface{}) error {
 	if len(parameters) > 0 {
 		parms["pool/add-parameters"] = parameters
 	}
-
+	allFilters := []string{"Runnable=Eq(true)", "WorkflowComplete=Eq(true)", "WorkOrderMode=Eq(false)"}
 	if filters, ok := d.GetOk("filters"); ok {
-		parms["pool/filter"] = filters.([]interface{})
+		for _, ii := range filters.([]interface{}) {
+			f := ii.(string)
+			allFilters = append(allFilters, f)
+		}
 	}
+	parms["pool/filter"] = allFilters
 
 	pr := []*models.PoolResult{}
 	req := cc.session.Req().Post(parms).UrlFor("pools", pool, "allocateMachines")
@@ -184,9 +208,12 @@ func resourceMachineRead(d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("Unable to get machine %s", uuid)
 	}
 	machineObject := mo.(*models.Machine)
-
+	if machineObject.PoolStatus == "HoldBuild" {
+		log.Printf("[DEBUG] Machine: #{uuid} in HoldBuild status. Investigate the cause on the DRP endpoint.")
+		return fmt.Errorf("machine %s stuck in HoldBuild status", uuid)
+	}
 	d.Set("status", machineObject.PoolStatus)
-	d.Set("address", machineObject.Address)
+	d.Set("address", machineObject.Address.String())
 	d.Set("name", machineObject.Name)
 
 	return nil
@@ -243,6 +270,11 @@ func resourceMachineRelease(d *schema.ResourceData, m interface{}) error {
 	}
 	if len(parameters) > 0 {
 		parms["pool/remove-parameters"] = parameters
+	}
+	// Add/overwrite the default/operator defined release action workflow
+	pwf := d.Get("deallocate_workflow").(string)
+	if pwf != "" {
+		parms["pool/workflow"] = pwf
 	}
 
 	req := cc.session.Req().Post(parms).UrlFor("pools", pool, "releaseMachines")
