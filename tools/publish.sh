@@ -6,7 +6,7 @@ set -e
 version="$Prepart$MajorV.$MinorV.$PatchV$Extra"
 
 TOKEN=R0cketSk8ts
-for i in terraform-provider-drp ; do
+for i in drp-tp ; do
     echo "Publishing $i to cloud"
     CONTENT=$i
 
