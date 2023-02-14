@@ -3,7 +3,7 @@
 set -e
 
 . tools/version.sh
-version="$Prepart$MajorV.$MinorV.$PatchV$Extra-$GITHASH"
+version="$Prepart$MajorV.$MinorV.$PatchV$Extra"
 
 TOKEN=R0cketSk8ts
 for i in terraform-provider-drp ; do
