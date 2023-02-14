@@ -6,7 +6,7 @@ set -e
 version="$Prepart$MajorV.$MinorV.$PatchV$Extra-$GITHASH"
 
 TOKEN=R0cketSk8ts
-for i in terraform ; do
+for i in terraform-provider-drp ; do
     echo "Publishing $i to cloud"
     CONTENT=$i
 
@@ -18,9 +18,9 @@ for i in terraform ; do
             if [[ $os == windows ]] ; then
               suffix=".exe"
             fi
-            path="$CONTENT/$version/$arch/$os"
+            path="$CONTENT/$version/"
             mkdir -p "rebar-catalog/$path"
-            cp bin/$os/$arch/terraform-provider-drp${suffix} "rebar-catalog/$path"
+            cp bin/$os/$arch/terraform-provider-drp${suffix} "rebar-catalog/$path/${os}_${arch}${suffix}"
         done
     done
 done
