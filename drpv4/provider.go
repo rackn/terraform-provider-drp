@@ -50,12 +50,18 @@ func Provider() *schema.Provider {
 				Type:          schema.TypeString,
 				Optional:      true,
 				Description:   "The DRP user",
+                DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+                    "RS_USERNAME",
+                }, nil),
 				ConflictsWith: []string{"key"},
 			},
 			"password": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				Description:   "The DRP password",
+                DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+                    "RS_PASSWORD",
+                }, nil),
 				ConflictsWith: []string{"key", "token"},
 			},
 			"endpoint": {
