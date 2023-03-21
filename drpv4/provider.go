@@ -197,6 +197,7 @@ func (p *Config) Configure(ctx context.Context, req provider.ConfigureRequest, r
 	}
 
 	log.Printf("[Info] Digital Rebar %+v", info.Version)
+	resp.ResourceData = p
 }
 
 func (p *Config) Resources(ctx context.Context) []func() resource.Resource {

@@ -151,6 +151,7 @@ func (r *MachineResource) Schema(ctx context.Context, req resource.SchemaRequest
 func (r *MachineResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
+		tflog.Error(ctx, "[resourceMachineConfigure] Missing provider data")
 		return
 	}
 
