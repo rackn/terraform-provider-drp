@@ -198,7 +198,7 @@ func (r *MachineResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	profiles := []string{}
-	diags = plan.AddProfiles.ElementsAs(ctx, profiles, false)
+	diags = plan.AddProfiles.ElementsAs(ctx, &profiles, false)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -209,7 +209,7 @@ func (r *MachineResource) Create(ctx context.Context, req resource.CreateRequest
 
 	parameters := map[string]interface{}{}
 	akeys := []string{}
-	diags = plan.AuthorizedKeys.ElementsAs(ctx, akeys, false)
+	diags = plan.AuthorizedKeys.ElementsAs(ctx, &akeys, false)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -223,7 +223,7 @@ func (r *MachineResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	aparams := []string{}
-	diags = plan.AddParameters.ElementsAs(ctx, aparams, false)
+	diags = plan.AddParameters.ElementsAs(ctx, &aparams, false)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -243,7 +243,7 @@ func (r *MachineResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 	allFilters := []string{"Runnable=Eq(true)", "WorkflowComplete=Eq(true)", "WorkOrderMode=Eq(false)"}
 	filters := []string{}
-	diags = plan.Filters.ElementsAs(ctx, filters, false)
+	diags = plan.Filters.ElementsAs(ctx, &filters, false)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -394,7 +394,7 @@ func (r *MachineResource) Delete(ctx context.Context, req resource.DeleteRequest
 	}
 
 	profiles := []string{}
-	diags = plan.AddProfiles.ElementsAs(ctx, profiles, false)
+	diags = plan.AddProfiles.ElementsAs(ctx, &profiles, false)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -405,7 +405,7 @@ func (r *MachineResource) Delete(ctx context.Context, req resource.DeleteRequest
 
 	parameters := []string{}
 	akeys := []string{}
-	diags = plan.AuthorizedKeys.ElementsAs(ctx, akeys, false)
+	diags = plan.AuthorizedKeys.ElementsAs(ctx, &akeys, false)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -415,7 +415,7 @@ func (r *MachineResource) Delete(ctx context.Context, req resource.DeleteRequest
 	}
 
 	aparams := []string{}
-	diags = plan.AddParameters.ElementsAs(ctx, aparams, false)
+	diags = plan.AddParameters.ElementsAs(ctx, &aparams, false)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
