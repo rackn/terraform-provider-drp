@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -24,6 +25,8 @@ var (
 	// to appropriate values for the compiled binary.
 	version string = "dev"
 
+	owner string = "digitalrebar"
+
 	// goreleaser can pass other information to the main package, such as the specific commit
 	// https://goreleaser.com/cookbooks/using-main.version/
 )
@@ -35,7 +38,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/digitalrebar/drp",
+		Address: fmt.Sprintf("registry.terraform.io/%s/drp", owner),
 		Debug:   debug,
 	}
 
