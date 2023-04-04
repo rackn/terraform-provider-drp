@@ -1,0 +1,27 @@
+---
+page_title: "Provider: drp_machine Provider"
+description: |-
+  The drp_machine provider provides a terraform thing for the pool api in drp. This allows operators 
+  familiar with terraform to control physical infrastcture using terraform and stuff.
+subcategory: "Infrastructure"
+---
+# This Is A Title
+
+Some text would go here about what to say and stuff.
+
+## Example tf File
+
+If we want to use the example file here I think we need to clean that file up and put the docs for it in this doc
+rather than in the file maybe.. but we may want it on the machine resource page..
+
+{{ tffile "examples/example.tf" }}
+
+## What About the Schema?
+
+    If we want to add the "schema" info blob we can do this.
+    `{{ `{{ .SchemaMarkdown | trimspace }}` }}`
+    The "Description" and "MarkdownDesctiption" do not get rendered from the top level "schema" so setting them in
+    provider.go makes no impact. This can also be seen by running `terrafom provider schema -json|jq  |less`
+    Then it would do
+    {{ .SchemaMarkdown | trimspace }}
+
