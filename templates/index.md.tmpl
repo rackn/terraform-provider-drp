@@ -1,0 +1,32 @@
+---
+page_title: "Digital Rebar (drp) Provider"
+description: |-
+  Provider Information
+subcategory: "Infrastructure"
+---
+# Digital Rebar (drp) Provider
+
+The Digital Rebar provider makes controlling Bare Metal simple, powerful and cloud-like.
+
+Manage physical servers, bare metal, virtual machines and cloud infrastructure via Terraform machines by leveraging Digital Rebar Machine Pools and Infrastructure PIpelines. These features provide powerful operational governance and transparency behind the scenes for infrastructure teams while keeping the Terraform "give me a machine" experience simple and cloud-like for development teams.
+
+Digital Rebar is a self-contained user-managed software platform: no external networking or cloud service is required. Further information about installing, licenses and operation of Digital Rebar can be found on the RackN websites: https://RackN.com/rebar.
+
+## Prerequisites & Usage
+
+You _must_ install Digital Rebar before using this provider. See https://portal.rackn.io for instructions.
+
+Integration documentation: https://docs.rackn.io/en/latest/doc/integrations/terraform.html
+
+Note: once installed, export `RS_KEY` environmental variable to define the "user:password" credentials (recommended over including the the plan provider stanza)
+
+{{ .SchemaMarkdown | trimspace }}
+
+## Provider Example
+
+{{ tffile "examples/provider/provider.tf" }}
+
+## Example of Complete tf File
+
+{{ tffile "examples/example.tf" }}
+
