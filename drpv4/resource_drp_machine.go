@@ -38,14 +38,16 @@ type MachineResource struct {
 type MachineResourceModel struct {
 	Id types.String `tfsdk:"id"`
 
-	Pool               types.String `tfsdk:"pool"`
-	AllocateWorkflow   types.String `tfsdk:"allocate_workflow"`
-	DeallocateWorkflow types.String `tfsdk:"deallocate_workflow"`
-	Timeout            types.String `tfsdk:"timeout"`
-	AddProfiles        types.List   `tfsdk:"add_profiles"`
-	AddParameters      types.List   `tfsdk:"add_parameters"`
-	Filters            types.List   `tfsdk:"filters"`
-	AuthorizedKeys     types.List   `tfsdk:"authorized_keys"`
+	Pool                 types.String `tfsdk:"pool"`
+	AllocateWorkflow     types.String `tfsdk:"allocate_workflow"`
+	DeallocateWorkflow   types.String `tfsdk:"deallocate_workflow"`
+	Timeout              types.String `tfsdk:"timeout"`
+	AddProfiles          types.List   `tfsdk:"add_profiles"`
+	AddParameters        types.List   `tfsdk:"add_parameters"`
+	Filters              types.List   `tfsdk:"filters"`
+	AuthorizedKeys       types.List   `tfsdk:"authorized_keys"`
+	DeallocateProfiles   types.List   `tfsdk:"deallocate_profiles"`
+	DeallocateParameters types.List   `tfsdk:"deallocate_parameters"`
 
 	Address types.String `tfsdk:"address"`
 	Name    types.String `tfsdk:"name"`
@@ -111,6 +113,22 @@ func (r *MachineResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"add_parameters": schema.ListAttribute{
 				ElementType:         types.StringType,
 				MarkdownDescription: "List of parameters to add to the machine when allocating.  Parameters are removed on release.",
+				Optional:            true,
+				PlanModifiers: []planmodifier.List{
+					listplanmodifier.RequiresReplace(),
+				},
+			},
+			"deallocate_profiles": schema.ListAttribute{
+				ElementType:         types.StringType,
+				MarkdownDescription: "List of profiles to add to the machine when deallocating.",
+				Optional:            true,
+				PlanModifiers: []planmodifier.List{
+					listplanmodifier.RequiresReplace(),
+				},
+			},
+			"deallocate_parameters": schema.ListAttribute{
+				ElementType:         types.StringType,
+				MarkdownDescription: "List of parameters to add to the machine when deallocating.",
 				Optional:            true,
 				PlanModifiers: []planmodifier.List{
 					listplanmodifier.RequiresReplace(),
@@ -432,6 +450,37 @@ func (r *MachineResource) Delete(ctx context.Context, req resource.DeleteRequest
 	}
 	if len(parameters) > 0 {
 		parms["pool/remove-parameters"] = parameters
+	}
+
+	profiles = []string{}
+	diags = plan.DeallocateProfiles.ElementsAs(ctx, &profiles, false)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	if len(profiles) > 0 {
+		parms["pool/add-profiles"] = profiles
+	}
+
+	params := map[string]interface{}{}
+	aparams = []string{}
+	diags = plan.DeallocateParameters.ElementsAs(ctx, &aparams, false)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	for _, p := range aparams {
+		param := strings.Split(p, ":")
+		if len(param) < 2 {
+			resp.Diagnostics.AddError("deallocate_parameter format not correct", p)
+			return
+		}
+		key := param[0]
+		value := strings.TrimLeft(param[1], " ")
+		params[key] = value
+	}
+	if len(params) > 0 {
+		parms["pool/add-parameters"] = params
 	}
 
 	pr := []*models.PoolResult{}
