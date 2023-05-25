@@ -112,7 +112,7 @@ func (p *Config) Schema(ctx context.Context, req provider.SchemaRequest, resp *p
 				},
 			},
 			"endpoint": schema.StringAttribute{
-				Required:            true,
+				Optional:            true,
 				Description:         "The DRP server URL. ie: https://1.2.3.4:8092",
 				MarkdownDescription: "The DRP server URL. ie: https://1.2.3.4:8092",
 			},
@@ -166,6 +166,10 @@ func (p *Config) Configure(ctx context.Context, req provider.ConfigureRequest, r
 		p.endpoint = endpoint
 	}
 
+	if p.endpoint == "" {
+		resp.Diagnostics.AddError("Missing DRP Endpoint", "While configuring the provider, no DRP Endpoint was specified by RS_ENDPOINT or 'endpoint' config directive.")
+		return
+	}
 	if p.token == "" && p.username == "" {
 		resp.Diagnostics.AddError("Malformed DRP credentials", "While configuring the provider, the key, token or username/password attributes must be provided.")
 		return
