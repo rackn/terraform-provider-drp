@@ -404,6 +404,7 @@ func (r *MachineResource) Delete(ctx context.Context, req resource.DeleteRequest
 	}
 	parms := map[string]interface{}{
 		"pool/wait-timeout": timeout,
+		"pool/machine-list": []string{uuid},
 	}
 	plan.Timeout = types.StringValue(timeout)
 
