@@ -1,12 +1,12 @@
-# RackN 2020
+# RackN 2023
 # Digital Rebar v4.4+ Terraform v0.13+ Provider
 
 terraform {
   required_version = ">= 0.13.0"
   required_providers {
     drp = {
-      version = "2.0.0"
-      source  = "extras.rackn.io/rackn/drp"
+      version = "2.3.1"
+      source  = "rackn/drp"
     }
   }
 }
@@ -31,10 +31,10 @@ resource "drp_machine" "one_random_node" {
   # deallocate_workflow = Name of workflow to set when the machine is released back to the pool
   # setting this overrides the defaults defined by the DRP admin
   # timeout = time string for max wait time (default to 5m)
-  # 
+  #
   # List of public SSH keys to be installed (written as Param.access-keys)
   # authorized_keys = ["ssh key"]
-  # 
+  #
   # List of profiles to apply to node (must already exist)
   # add_profiles = ["mandy", "clause"]
   #
