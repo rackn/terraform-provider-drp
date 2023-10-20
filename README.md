@@ -35,8 +35,8 @@ $ make build
 v0.13+ requres use of the required_providers stanza for your your OS and architecture! Then it will infer the cache path. You must copy your build output to the correct cache path.
 
 ```sh
-$ mkdir -p .terraform/plugins/rackn/drp/2.0/linux_amd64
-$ ln -s bin/linux/amd64/terraform-provider-drp .terraform/plugins/extras.rackn.io/rackn/drp/2.0.0/linux_amd64
+$ mkdir -p .terraform/plugins/rackn/drp/2.3.1/linux_amd64
+$ ln -s bin/linux/amd64/terraform-provider-drp .terraform/plugins/rackn/drp/2.3.1/linux_amd64
 ```
 
 ## Tests
